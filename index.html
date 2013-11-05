@@ -1,0 +1,98 @@
+<!Doctype html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+
+    <meta name="description" content="Big City House Wife" />
+    <meta name="keywords" content="Cartoon, Big City House Wife, Blog, Mommy Blog, Social Commentary" />
+    <meta name="author" content="Melissa Beltgens, Sakri Rosenstrom" />
+
+    <title>Big City House Wife</title>
+
+    <link rel="stylesheet" type="text/css" href="css/bigCityHouseWife.css">
+
+
+    <script type="text/javascript" src="js/BCHWMathUtil.js" ></script>
+    <script type="text/javascript" src="js/BCHWGeom.js" ></script>
+    <script type="text/javascript" src="js/BCHWArrayUtil.js" ></script>
+    <script type="text/javascript" src="js/RectanglesLayoutManager.js" ></script>
+    <script type="text/javascript" src="js/BCHWColor.js" ></script>
+    <script type="text/javascript" src="js/BCHWFont.js" ></script>
+    <script type="text/javascript" src="js/BCHWMain.js" ></script>
+    <script type="text/javascript" src="savedTweets/compiledTweets.js" ></script>
+    <!--<script type="text/javascript" src="js/BCHWTests.js" ></script>-->
+    <!-- -->
+    <script type="text/javascript">
+
+        //GOOGLE ANALYTICS
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-38074345-1', 'bigcityhousewife.net');
+
+        if(location.hostname && location.hostname.toLowerCase().indexOf("bigcityhousewife.net")>-1){
+            ga('send', 'pageview');
+        }
+
+        //MAIN APP
+        var main;
+
+        function init(){
+            //console.log(JSON.parse ? "I can has json" :  "no Json");
+            main = new BCHWMain();
+            main.init(document.getElementById("homeCanvasContainer"));
+            if(this["BCHWTests"]!=null)runTests(true,false);
+            //tryTwitter();
+            //startDiscussion();
+        }
+
+        function resizeHandler(){
+            main.resizeHandler();//on some desktops the location.reload() doesn't seem to fire
+        }
+
+        var readyStateCheckInterval = setInterval( function() {
+            if (document.readyState === "complete") {
+                init();
+                clearInterval(readyStateCheckInterval);
+            }
+        }, 10);
+
+    </script>
+
+</head>
+<body onresize="resizeHandler()"  >
+
+    <div id="homeCanvasContainer">
+       <!--<cavas id="homeCanvas" ></cavas>-->
+    </div>
+
+    <!-- link to blog and social media -->
+    <span id="BCHWLinks">
+        <a href="http://www.bigcityhousewife.net/blog" id="blogLink" >
+            <!--<strong>26</strong>-->
+            <img 	src="assets/blog.png"
+                    title="Big City House Wife Blog"
+                    alt="limk to the Big City House Wife Blog" />
+        </a>
+        <div id="BCHWSocialMediaLinks">
+            <a href="https://www.facebook.com/BigCityHouseWife" class="blockImageLink"  >
+                <img 	src="assets/facebook.png"
+                        title="Big City House Wife Facebook page, don't hesitate to like and share!"
+                        alt="link to the Big City House Wife Facebook page, don't hesitate to like and share!"
+                        style="margin-bottom:10px" />
+            </a>
+            <a href="https://twitter.com/B_C_H_W"  class="blockImageLink"  >
+                <img 	src="assets/twitter.png"
+                        title="Big City House Wife on Twitter, follow and retweet :)"
+                        alt="link to Big City House Wife on Twitter, follow and retweet :)"
+                        style="margin-bottom:15px" />
+            </a>
+        </div>
+    </span>
+
+</body>
+</html>
