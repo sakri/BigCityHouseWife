@@ -7,22 +7,22 @@
 
 (function (window){
 
-	BCHWAssert=function(){}
+	var BCHWAssert = function(){
+        this.testsRan = 0;
+        this.testsPassed = 0;
+        this.testsFailed = [];
+    };
 	
-	BCHWAssert.prototype.testsRan=0;
-	BCHWAssert.prototype.testsPassed=0;
-	BCHWAssert.prototype.testsFailed=new Array();
-	
-	BCHWAssert.prototype.assertEquals=function(value1,value2,testName){
+	BCHWAssert.prototype.assertEquals = function(value1, value2, testName){
 		this.testsRan++;
-		if(value1==value2){
+		if(value1 == value2){
 			this.testsPassed++;
 		}else{
 			this.testsFailed.push(testName +" failed assertEquals with values : ( "+value1+" , "+value2+" )");
 		}
-	}
+	};
 	
-	BCHWAssert.prototype.showSummary=function(){
+	BCHWAssert.prototype.showSummary = function(){
 		console.log(" ===========:: BCHW TESTS SUMMMARY ::==========");
 		console.log(" ===========:: tests ran : "+this.testsRan+" ::===============");
 		console.log(" ===========:: tests passed : "+this.testsPassed+" ::============");
@@ -30,13 +30,13 @@
 			console.log(" ===========:: ALL TESTS PASSED! ::============");		
 		}else{
 			console.log(" ===========:: !!! TESTS FAILED !!!! ::============");
-			for(var i=0;i<this.testsFailed.length;i++){
+			for(var i=0; i<this.testsFailed.length; i++){
 				console.log("     => "+this.testsFailed[i]);
 			}
 		}
-	}
+	};
 	
-	window.BCHWAssert=BCHWAssert;
+	window.BCHWAssert = BCHWAssert;
 	
 }(window));
 
@@ -47,23 +47,23 @@
 
 (function (window){
 
-	BCHWTests=function(){
-		this.tests=new Array();
-		this.verboseTests=new Array();
-	}
+	var BCHWTests = function(){
+		this.tests = [];
+		this.verboseTests = [];
+	};
 		
-	BCHWTests.prototype.addTest=function(test,verbose){
+	BCHWTests.prototype.addTest = function(test,verbose){
 		this.tests.push(test);
 		this.verboseTests.push(verbose);
-	}
+	};
 	
-	BCHWTests.prototype.run=function(assertions){
+	BCHWTests.prototype.run = function(assertions){
 		for(var i=0;i<this.tests.length;i++){
 			this.tests[i](assertions,this.verboseTests[i]);
 		}
-	}
+	};
 	
-	window.BCHWTests=BCHWTests;
+	window.BCHWTests = BCHWTests;
 	
 }(window));
 
@@ -458,42 +458,42 @@ function testDrawRandomCharacter(assertions,verbose){
 
 //move to data tests
 
-//must receive a new instance of a LayoutManager
+//must receive a new instance of a LayoutRectangle
 function testLayoutManagerLayoutProperties(assertions,testName,manager){
 	
 	//check default align
-	assertions.assertEquals(manager.verticalAlign,LayoutManager.VERTICAL_ALIGN_MIDDLE,testName);
-	assertions.assertEquals(manager.horizontalAlign,LayoutManager.HORIZONTAL_ALIGN_MIDDLE,testName);
+	assertions.assertEquals(manager.verticalAlign,LayoutRectangle.VERTICAL_ALIGN_MIDDLE,testName);
+	assertions.assertEquals(manager.horizontalAlign,LayoutRectangle.HORIZONTAL_ALIGN_MIDDLE,testName);
 	
 	//check align setting
 	//vertical align
-	manager.setVerticalAlign(LayoutManager.VERTICAL_ALIGN_BOTTOM);
-	assertions.assertEquals(manager.verticalAlign,LayoutManager.VERTICAL_ALIGN_BOTTOM,testName);
+	manager.setVerticalAlign(LayoutRectangle.VERTICAL_ALIGN_BOTTOM);
+	assertions.assertEquals(manager.verticalAlign,LayoutRectangle.VERTICAL_ALIGN_BOTTOM,testName);
 	
-	manager.setVerticalAlign(LayoutManager.VERTICAL_ALIGN_TOP);
-	assertions.assertEquals(manager.verticalAlign,LayoutManager.VERTICAL_ALIGN_TOP,testName);
+	manager.setVerticalAlign(LayoutRectangle.VERTICAL_ALIGN_TOP);
+	assertions.assertEquals(manager.verticalAlign,LayoutRectangle.VERTICAL_ALIGN_TOP,testName);
 	
-	manager.setVerticalAlign(LayoutManager.VERTICAL_ALIGN_MIDDLE);
-	assertions.assertEquals(manager.verticalAlign,LayoutManager.VERTICAL_ALIGN_MIDDLE,testName);
+	manager.setVerticalAlign(LayoutRectangle.VERTICAL_ALIGN_MIDDLE);
+	assertions.assertEquals(manager.verticalAlign,LayoutRectangle.VERTICAL_ALIGN_MIDDLE,testName);
 	
 	manager.setVerticalAlign("nonExistingAlign");
-	assertions.assertEquals(manager.verticalAlign,LayoutManager.VERTICAL_ALIGN_MIDDLE,testName);
+	assertions.assertEquals(manager.verticalAlign,LayoutRectangle.VERTICAL_ALIGN_MIDDLE,testName);
 
 	//horizontal align	
-	manager.setHorizontalAlign(LayoutManager.HORIZONTAL_ALIGN_LEFT);
-	assertions.assertEquals(manager.horizontalAlign,LayoutManager.HORIZONTAL_ALIGN_LEFT,testName);	
+	manager.setHorizontalAlign(LayoutRectangle.HORIZONTAL_ALIGN_LEFT);
+	assertions.assertEquals(manager.horizontalAlign,LayoutRectangle.HORIZONTAL_ALIGN_LEFT,testName);
 	
-	manager.setHorizontalAlign(LayoutManager.HORIZONTAL_ALIGN_RIGHT);
-	assertions.assertEquals(manager.horizontalAlign,LayoutManager.HORIZONTAL_ALIGN_RIGHT,testName);	
+	manager.setHorizontalAlign(LayoutRectangle.HORIZONTAL_ALIGN_RIGHT);
+	assertions.assertEquals(manager.horizontalAlign,LayoutRectangle.HORIZONTAL_ALIGN_RIGHT,testName);
 
-	manager.setHorizontalAlign(LayoutManager.HORIZONTAL_ALIGN_MIDDLE);
-	assertions.assertEquals(manager.horizontalAlign,LayoutManager.HORIZONTAL_ALIGN_MIDDLE,testName);	
+	manager.setHorizontalAlign(LayoutRectangle.HORIZONTAL_ALIGN_MIDDLE);
+	assertions.assertEquals(manager.horizontalAlign,LayoutRectangle.HORIZONTAL_ALIGN_MIDDLE,testName);
 	
-	manager.setHorizontalAlign(LayoutManager.HORIZONTAL_ALIGN_JUSTIFY);
-	assertions.assertEquals(manager.horizontalAlign,LayoutManager.HORIZONTAL_ALIGN_JUSTIFY,testName);	
+	manager.setHorizontalAlign(LayoutRectangle.HORIZONTAL_ALIGN_JUSTIFY);
+	assertions.assertEquals(manager.horizontalAlign,LayoutRectangle.HORIZONTAL_ALIGN_JUSTIFY,testName);
 	
 	manager.setHorizontalAlign("nonExistingAlign");
-	assertions.assertEquals(manager.horizontalAlign,LayoutManager.HORIZONTAL_ALIGN_MIDDLE,testName);	
+	assertions.assertEquals(manager.horizontalAlign,LayoutRectangle.HORIZONTAL_ALIGN_MIDDLE,testName);
 	
 	return manager;
 }
@@ -541,17 +541,17 @@ function testRenderBCHWFontLayoutRow(assertions,verbose){
 	var canvas=document.querySelector("canvas");
 	var context=canvas.getContext("2d");
 
-	var rowManager=new BCHWFontLayoutRow();
-	var layoutRectangle=BCHWGeom.createRectangle(canvas.width*.1,canvas.height*.1,800,80);
-	rowManager.layoutRectangle=layoutRectangle;
-	if(verbose)console.log("rowManager.layoutRectangle.toString() : "+rowManager.layoutRectangle.toString());
+	var rowManager = new BCHWFontLayoutRect();
+	var layoutRectangle = BCHWGeom.createRectangle(canvas.width*.1,canvas.height*.1,800,80);
+	rowManager.updateToRect(layoutRectangle)
+	if(verbose)console.log("rowManager.layoutRectangle.toString() : "+rowManager.toString());
 
 	renderBCHWFontLayoutRow(rowManager,"big city",context);
 	
-	rowManager=new BCHWFontLayoutRow();
+	rowManager=new BCHWFontLayoutRect();
 	layoutRectangle=BCHWGeom.createRectangle(canvas.width*.1,canvas.height*.1+80,800,80);
-	rowManager.layoutRectangle=layoutRectangle;
-	if(verbose)console.log("rowManager.layoutRectangle.toString() : "+rowManager.layoutRectangle.toString());
+	rowManager.updateToRect(layoutRectangle);
+	if(verbose)console.log("rowManager.layoutRectangle.toString() : "+rowManager.toString());
 	renderBCHWFontLayoutRow(rowManager,"house wife",context);
 
 }

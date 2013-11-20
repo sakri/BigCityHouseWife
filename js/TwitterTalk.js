@@ -26,11 +26,11 @@ Consider putting all 3 classes within one self excecuting function or "namespace
 
 	}
 	
-	LayoutManager.prototype.loadTweets=function(){
+	LayoutRectangle.prototype.loadTweets=function(){
 
 	}
 	
-	LayoutManager.prototype.getNextCharacter=function(){
+	LayoutRectangle.prototype.getNextCharacter=function(){
 
 	}
 

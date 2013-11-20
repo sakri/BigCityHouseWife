@@ -1,8 +1,8 @@
 (function (window){
 
-	BCHWArrayUtil=function(){}
+	var BCHWArrayUtil=function(){};
 	
-	BCHWArrayUtil.shuffle=function(array){
+	BCHWArrayUtil.shuffle = function(array){
 		//console.log("BCHWArrayUtil.shuffle : "+array);
 		var copy=[];
 		while(array.length>0){
@@ -11,15 +11,15 @@
 		}
 		//console.log("copy : "+copy);
 		return copy;
-	}
+	};
 	
-	BCHWArrayUtil.createSequentialNumericArray=function(length){
+	BCHWArrayUtil.createSequentialNumericArray = function(length){
 		var array=[];
 		for(var i=0;i<length;i++){
 			array[i]=i;
 		}
 		return array;
-	}
+	};
 	
 	
 	window.BCHWArrayUtil=BCHWArrayUtil;

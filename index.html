@@ -11,19 +11,37 @@
 
     <title>Big City House Wife</title>
 
-    <link rel="stylesheet" type="text/css" href="css/bigCityHouseWife.css">
+    <link rel="stylesheet" type="text/css" href="css/bigCityHouseWife.min.css">
 
 
+    <!--<script type="text/javascript" src="js/TweetsManager.js" ></script>
     <script type="text/javascript" src="js/BCHWMathUtil.js" ></script>
     <script type="text/javascript" src="js/BCHWGeom.js" ></script>
     <script type="text/javascript" src="js/BCHWArrayUtil.js" ></script>
-    <script type="text/javascript" src="js/RectanglesLayoutManager.js" ></script>
+    <script type="text/javascript" src="js/BCHWLayout.js" ></script>
     <script type="text/javascript" src="js/BCHWColor.js" ></script>
     <script type="text/javascript" src="js/BCHWFont.js" ></script>
-    <script type="text/javascript" src="js/BCHWMain.js" ></script>
-    <script type="text/javascript" src="savedTweets/compiledTweets.js" ></script>
+    <script type="text/javascript" src="js/BCHWLogo.js" ></script>
+    <script type="text/javascript" src="js/BCHWCharacters.js" ></script>
+    <script type="text/javascript" src="js/BCHWSpeechBubble.js" ></script>
+    <script type="text/javascript" src="js/BCHWMain.js" ></script>-->
+
+
+    <script type="text/javascript" src="js/TweetsManager.min.js" ></script>
+    <script type="text/javascript" src="js/BCHWMathUtil.min.js" ></script>
+    <script type="text/javascript" src="js/BCHWGeom.min.js" ></script>
+    <script type="text/javascript" src="js/BCHWArrayUtil.min.js" ></script>
+    <script type="text/javascript" src="js/BCHWLayout.min.js" ></script>
+    <script type="text/javascript" src="js/BCHWColor.min.js" ></script>
+    <script type="text/javascript" src="js/BCHWFont.min.js" ></script>
+    <script type="text/javascript" src="js/BCHWLogo.min.js" ></script>
+    <script type="text/javascript" src="js/BCHWCharacters.min.js" ></script>
+    <script type="text/javascript" src="js/BCHWSpeechBubble.min.js" ></script>
+    <script type="text/javascript" src="js/BCHWMain.min.js" ></script>
+
+
     <!--<script type="text/javascript" src="js/BCHWTests.js" ></script>-->
-    <!-- -->
+
     <script type="text/javascript">
 
         //GOOGLE ANALYTICS
@@ -44,14 +62,18 @@
         function init(){
             //console.log(JSON.parse ? "I can has json" :  "no Json");
             main = new BCHWMain();
-            main.init(document.getElementById("homeCanvasContainer"));
+            var canvasContainer = document.getElementById("homeCanvasContainer");
+            var speechBubbleContainer =  document.getElementById("speechBubbleContainer");
+            main.init(canvasContainer, speechBubbleContainer);
             if(this["BCHWTests"]!=null)runTests(true,false);
             //tryTwitter();
             //startDiscussion();
         }
 
         function resizeHandler(){
-            main.resizeHandler();//on some desktops the location.reload() doesn't seem to fire
+            if(main){
+                main.resizeHandler();//on some desktops the location.reload() doesn't seem to fire
+            }
         }
 
         var readyStateCheckInterval = setInterval( function() {
@@ -61,19 +83,25 @@
             }
         }, 10);
 
+        function speechBubbleContainerMouseOverHandler(){
+            main.speechBubbleContainerMouseOverHandler();
+        }
+        function speechBubbleContainerMouseOutHandler(event){
+            main.speechBubbleContainerMouseOutHandler(event);
+        }
+
     </script>
 
 </head>
 <body onresize="resizeHandler()"  >
 
-    <div id="homeCanvasContainer">
-       <!--<cavas id="homeCanvas" ></cavas>-->
-    </div>
+    <div id="homeCanvasContainer"></div>
+
+    <div id="speechBubbleContainer" onmouseover="speechBubbleContainerMouseOverHandler()" onmouseout="speechBubbleContainerMouseOutHandler(event)"></div>
 
     <!-- link to blog and social media -->
     <span id="BCHWLinks">
         <a href="http://www.bigcityhousewife.net/blog" id="blogLink" >
-            <!--<strong>26</strong>-->
             <img 	src="assets/blog.png"
                     title="Big City House Wife Blog"
                     alt="limk to the Big City House Wife Blog" />

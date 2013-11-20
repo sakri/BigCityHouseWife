@@ -3,122 +3,138 @@
 (function (window){
 
 	function BCHWMain(){
-		this.margin=.1;
-	}
+		this.margin = .05;
+        this.momWidth = .2;
+        this.lineThickness = 4;
+        this.resizeTimeoutId = -1;
+        this.bubbleArrowHeight = 20;
+    }
 
     //static variables
-    BCHWMain.REFRESH_AFTER_RESIZE_INTERVAL=300;//wait this long to rerender graphics after last resize
-    BCHWMain.RENDER_CHARACTER_INTERVAL=30;//characters are rendered one at a time with this interval between renders
-    BCHWMain.MAX_WIDTH=800;
-    BCHWMain.MAX_HEIGHT=600;
+    BCHWMain.REFRESH_AFTER_RESIZE_INTERVAL = 300;//wait this long to rerender graphics after last resize
+    BCHWMain.TWEET_INTERVAL = 5000;//characters display a tweet at this interval
 
-    BCHWMain.prototype.init = function(demoContainer){
-        console.log("BCHWMain.init()");
+    BCHWMain.prototype.init = function(canvasContainer, speechBubbleContainer){
+        //console.log("BCHWMain.init()");
         this.canvas = document.createElement('canvas');
-        this.demoContainer = demoContainer;
+        this.canvasContainer = canvasContainer;
         this.context = this.canvas.getContext("2d");
         this.context.lineCap="round";
-        demoContainer.appendChild(this.canvas);
-        //var scope = this;
-        //setTimeout(function(){scope.render();}, BCHWMain.REFRESH_AFTER_RESIZE_INTERVAL );
-        this.createLogo();
+        this.canvasContainer.appendChild(this.canvas);
+        this.logo = new BCHWLogo(this.canvas);
+        this.logo.lineThickness = this.lineThickness;
+        this.mom = new BCHWMom(this.canvas);
+        this.mom.lineThickness = this.lineThickness;
         this.render();
+        this.tweetsManager = new TweetsManager();
+        var scope = this;
+        this.tweetsManager.loadTweets(function(){scope.tweetsLoadedHandler()});
+        this.speechBubbleContainer = speechBubbleContainer;
+        this.speechBubble = new BCHWSpeechBubble(this.canvas, this.bubbleArrowHeight);
     };
-
 
 	BCHWMain.prototype.clearContext = function(){
 		this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
 	}
 
-	//var resizeHelperDate=new Date();
-	//var lastResize=date.get
 	BCHWMain.prototype.resizeHandler = function(){
 		this.clearContext();
-		clearTimeout (this.renderTimeoutId);
-		clearTimeout (this.renderCharactersTimeoutId);
+        this.speechBubbleContainer.style.opacity = 0;
+		clearTimeout (this.resizeTimeoutId);
+		clearTimeout (this.twitterTalkTimeout);
+        this.speechBubble.stop();
 		var scope = this;
-		this.renderTimeoutId = setTimeout(function(){
-             scope.render();
+		this.resizeTimeoutId = setTimeout(function(){
+             scope.reset();
           }, BCHWMain.REFRESH_AFTER_RESIZE_INTERVAL );
 	};
-	
+
+    BCHWMain.prototype.reset = function(){
+        this.render();
+        this.setTwitterTalkTimeout();
+    }    
 	
 	BCHWMain.prototype.render = function(){
-        this.canvas.width = this.demoContainer.clientWidth;
-        this.canvas.height = this.demoContainer.clientHeight;
+        //console.log("BCHWMain.render()");
+        this.canvas.width = this.canvasContainer.clientWidth;
+        this.canvas.height = this.canvasContainer.clientHeight;
 		this.clearContext();
-        this.renderLogo();
-	};
-	
-	BCHWMain.prototype.renderBG = function(){
-		this.context.fillStyle=BCHWColor.BCHWColorsLib.TURQUOISE.getCanvasColorString();
-		this.context.fillRect(0,0,this.canvas.width,this.canvas.height);
-	};
+        //console.log("\t canvas width, height  : ",this.canvas.width, this.canvas.height);
 
-	BCHWMain.prototype.createLogo = function(manager,text){
-		this.row1=new BCHWFontLayoutRow();
-		this.setRowManagerText(this.row1,"big city");
-		this.row2=new BCHWFontLayoutRow();		
-		this.setRowManagerText(this.row2,"house wife");
-    };
+        var boundsX = this.canvas.width*this.margin;
+        var boundsY = this.canvas.height*this.margin;
+        var renderBounds = new BCHWGeom.Rectangle(boundsX, boundsY, this.canvas.width-boundsX*2, this.canvas.height-boundsY*2);
+        //console.log("\trenderBounds : ",renderBounds.toString());
 
-	BCHWMain.prototype.setRowManagerText=function(manager,text){
-		var lineColor=BCHWColor.BCHWColorsLib.WHITE;
-		var character,color,i,fontCharacter;
-		for(i=0;i<text.length;i++){
-			character=text.charAt(i);
-			color=BCHWColor.BCHWColorsLib.getNextColor(color);
-			fontCharacter=BCHWFontCharacter.createBCHWFontCharacter(character,color,lineColor,4, new BCHWGeom.RoundedRectangle());
-			if(character==" ")fontCharacter.width=.5;
-			manager.addCharacter(fontCharacter);
-		}
+        this.lineThickness = renderBounds.width > 700 ? 4 : 2;
+        //console.log("lineThickness", lineThickness);
+
+        //MOM
+        this.momBounds = new BCHWGeom.Rectangle(renderBounds.x, renderBounds.y, renderBounds.width*this.momWidth, renderBounds.height);
+        //this.context.fillStyle = "#FF0000";
+        //this.context.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        this.mom.render(this.momBounds, this.lineThickness);
+        //console.log("\t",bounds.toString());
+
+        //LOGO
+        this.logoBounds = new BCHWGeom.Rectangle(   this.momBounds.getRight()+this.lineThickness, renderBounds.y,
+                                                    renderBounds.getRight()-this.momBounds.getRight()-this.lineThickness, renderBounds.height);
+        this.logo.render(this.logoBounds, this.lineThickness);
+        //console.log("\t",bounds.toString());
+
 	};
 
 
-	
-	BCHWMain.prototype.renderCharacters = function(){
-		this.zIndeces=BCHWArrayUtil.createSequentialNumericArray(this.allCharacters.length);
-		this.zIndeces=BCHWArrayUtil.shuffle(this.zIndeces);
-		this.currentRenderIndex=0;
-		this.renderNextCharacter();
-	};
-	
-	BCHWMain.prototype.renderNextCharacter = function(){
-		if(this.currentRenderIndex==this.allCharacters.length){
-			return;
-		}
-		fontCharacter=this.allCharacters[this.zIndeces[this.currentRenderIndex]];
-		fontCharacter.addRandomness(2,.01);
-		fontCharacter.renderToContext(this.context);
-			
-		var scope=this; 
-		this.renderCharactersTimeoutId = setTimeout(function(){
-             scope.renderNextCharacter();
-          }, BCHWMain.RENDER_CHARACTER_INTERVAL );
-		this.currentRenderIndex++;
-	};
-	
-	BCHWMain.prototype.renderLogo = function(){
-		var screenRectX=this.canvas.width*this.margin;
-		var screenRectY=this.canvas.height*this.margin;
-		var screenRect=BCHWGeom.createRectangle(screenRectX,screenRectY,this.canvas.width-screenRectX*2,this.canvas.height-screenRectY*2);
-		
-		var layoutRect=BCHWGeom.RectangleUtil.getBiggerRectangle(this.row1.getSampleRect(100),this.row2.getSampleRect(100));
-		BCHWGeom.RectangleUtil.scaleRectToBestFit(screenRect,layoutRect);
-		BCHWGeom.RectangleUtil.horizontalAlignMiddle(screenRect,layoutRect);
-				
-		layoutRect.y=BCHWGeom.RectangleUtil.getCenterY(screenRect)-layoutRect.height;
-		this.row1.layoutRectangle=layoutRect;
-		this.row1.layoutCharacters();
+    BCHWMain.prototype.tweetsLoadedHandler = function(){
+        //console.log("BCHWMain.tweetsLoadedHandler()");
+        this.showNextTweet();
+    }
 
-		layoutRect.y=BCHWGeom.RectangleUtil.getCenterY(screenRect);
-		this.row2.layoutRectangle=layoutRect;
-		this.row2.layoutCharacters();
-		
-		this.allCharacters=this.row1.characters.concat(this.row2.characters);
-		this.renderCharacters();
-	};
-	
-	window.BCHWMain=BCHWMain;
+    BCHWMain.prototype.showNextTweet = function(){
+        //console.log("BCHWMain.showNextTweet()");
+        this.speechBubbleContainer.style.opacity = 0;
+        var tweet = this.tweetsManager.getNextTweet();
+        //console.log(tweet);
+        this.speechBubbleContainer.innerHTML = "<p>"+tweet+"</p>";
+        this.speechBubbleContainer.style.maxWidth = (this.logoBounds.width+this.momBounds.width/2)+"px";
+        var x = this.canvasContainer.offsetLeft + this.mom.getCenterX();
+        var y = this.canvasContainer.offsetTop + this.mom.y - this.speechBubbleContainer.clientHeight-this.bubbleArrowHeight - this.speechBubble.padding*2;
+        this.speechBubbleContainer.style.left = x+"px";
+        this.speechBubbleContainer.style.top = y+"px";
+        this.bubbleBounds = new BCHWGeom.Rectangle( this.mom.getCenterX(), this.mom.y - this.speechBubbleContainer.clientHeight-this.bubbleArrowHeight - this.speechBubble.padding*2,
+                                                    this.speechBubbleContainer.clientWidth,  this.speechBubbleContainer.clientHeight+this.bubbleArrowHeight);
+        this.mom.render(this.momBounds,this.lineThickness);
+        var scope = this;
+        this.speechBubble.render(this.bubbleBounds, this.lineThickness, function(){scope.speechBubbleCompleteHandler()} )
+    }
+
+    BCHWMain.prototype.speechBubbleCompleteHandler = function(){
+        this.speechBubbleContainer.style.opacity = 1;
+        this.setTwitterTalkTimeout();
+    }
+
+    BCHWMain.prototype.setTwitterTalkTimeout = function(){
+        //console.log("BCHWMain.setTwitterTalkTimeout()");
+        var scope = this;
+        this.twitterTalkTimeout = setTimeout(function(){
+            scope.showNextTweet();
+        }, BCHWMain.TWEET_INTERVAL );
+    }
+
+    BCHWMain.prototype.speechBubbleContainerMouseOverHandler = function(){
+        clearTimeout (this.twitterTalkTimeout);
+    }
+    //this is necessary because mouseOut is called when mouse goes over the text of a tweet
+    //doesn't work when mouse moves out from right side of bubble?!
+    BCHWMain.prototype.speechBubbleContainerMouseOutHandler = function(event){
+        var rect = new BCHWGeom.Rectangle(  this.speechBubbleContainer.offsetLeft, this.speechBubbleContainer.offsetTop,
+                                            this.speechBubbleContainer.clientWidth, this.speechBubbleContainer.clientHeight);
+        //console.log("BCHWMain.speechBubbleContainerMouseOutHandler()", rect.toString(), event.clientX, event.clientY )
+        if(!rect.containsPoint(event.clientX, event.clientY)){
+            this.setTwitterTalkTimeout();
+        }
+    }
+
+	window.BCHWMain = BCHWMain;
 	
 }(window));

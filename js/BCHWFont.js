@@ -2,10 +2,10 @@
 (function (window){
 
 	var BCHWFontCharacter = function (){
-		this.width=1;//rename to width percent?!
-		this.color=new BCHWColor.createRGBAColor();
-		this.thickness=1;
-		this.roundedRect;//TODO reconsider naming roundedRectangle? just rectangle? bounds?	
+		this.width = 1;
+		this.color = new BCHWColor.createRGBAColor();
+		this.thickness = 1;
+		this.roundedRect;
 	};
 	
 	BCHWFontCharacter.prototype.renderFunction = function(context,character){
@@ -24,23 +24,24 @@
 	};
 
 	
-	BCHWFontCharacter.createBCHWFontCharacter=function (character,color,lineColor,thickness,roundedRect){
+	BCHWFontCharacter.createBCHWFontCharacter = function (character,color,lineColor,thickness,roundedRect){
 		//TODO add Failsafes!
-		var fontCharacter=new BCHWFontCharacter();
-		fontCharacter.color=color;
-		fontCharacter.lineColor=lineColor;
-		fontCharacter.thickness=thickness;
-		fontCharacter.roundedRect=roundedRect;
-		var renderFunction=BCHWFontCharacterRenderer.getRenderFunction(character);
+		var fontCharacter = new BCHWFontCharacter();
+		fontCharacter.color = color;
+		fontCharacter.lineColor = lineColor;
+		fontCharacter.thickness = thickness;
+		fontCharacter.roundedRect = roundedRect;
+		var renderFunction = BCHWFontCharacterRenderer.getRenderFunction(character);
 		if(renderFunction){
             fontCharacter.renderFunction=renderFunction;
         }
-		fontCharacter.width=BCHWFontCharacterRenderer.getCharacterWidthPercent(character);
+		fontCharacter.width = BCHWFontCharacterRenderer.getCharacterWidthPercent(character);
 		//console.log("BCHWFontCharacter.createBCHWFontCharacter width : "+fontCharacter.width);
 		return fontCharacter;
 	};
 	
-	window.BCHWFontCharacter=BCHWFontCharacter;
+	window.BCHWFontCharacter = BCHWFontCharacter;
+
 }(window));
 
 
@@ -51,13 +52,16 @@
 	//THIS SHOULD BE IN A geom JS File or so
 	BCHWFontCharacterRenderer.renderRoundedRectToContext = function(context,character){
 		context.beginPath();
-		context.lineWidth=character.thickness;
-		context.fillStyle=character.color.getCanvasColorString();
-		context.strokeStyle=character.lineColor.getCanvasColorString();
-			
-		context.moveTo(character.roundedRect.x,character.roundedRect.y+character.roundedRect.radius);  
-		context.lineTo(character.roundedRect.x,character.roundedRect.y+character.roundedRect.height-character.roundedRect.radius);  
-		context.quadraticCurveTo(character.roundedRect.x,character.roundedRect.y+character.roundedRect.height,character.roundedRect.x+character.roundedRect.radius,character.roundedRect.y+character.roundedRect.height);  
+		context.lineWidth = character.thickness;
+		context.fillStyle = character.color.getCanvasColorString();
+		context.strokeStyle = character.lineColor.getCanvasColorString();
+
+		context.moveTo(character.roundedRect.x, character.roundedRect.y+character.roundedRect.radius);
+		context.lineTo(character.roundedRect.x, character.roundedRect.y+character.roundedRect.height-character.roundedRect.radius);
+		context.quadraticCurveTo(   character.roundedRect.x,
+                                    character.roundedRect.y+character.roundedRect.height,
+                                    character.roundedRect.x+character.roundedRect.radius,
+                                    character.roundedRect.y+character.roundedRect.height);
 		context.lineTo(character.roundedRect.x+character.roundedRect.width-character.roundedRect.radius,character.roundedRect.y+character.roundedRect.height);  
 		context.quadraticCurveTo(character.roundedRect.x+character.roundedRect.width,character.roundedRect.y+character.roundedRect.height,character.roundedRect.x+character.roundedRect.width,character.roundedRect.y+character.roundedRect.height-character.roundedRect.radius);  
 		context.lineTo(character.roundedRect.x+character.roundedRect.width,character.roundedRect.y+character.roundedRect.radius);  
@@ -103,43 +107,43 @@
         }
 		switch(character.toLowerCase()){
 			case "b":
-				percent=1;
+				percent = 1;
 				break;
 			case "c":
-				percent=.9;
+				percent = .9;
 				break;
 			case "e":
-				percent=.8;
+				percent = .8;
 				break;
 			case "f":
-				percent=.8;
+				percent = .8;
 				break;
 			case "g":
-				percent=.9;
+				percent = .9;
 				break;
 			case "h":
-				percent=.9;
+				percent = .9;
 				break;
 			case "i":
-				percent=.5;
+				percent = .5;
 				break;
 			case "o":
-				percent=.9;
+				percent = .9;
 				break;
 			case "s":
-				percent=.8;
+				percent = .8;
 				break;
 			case "t":
-				percent=1;
+				percent = 1;
 				break;
 			case "u":
-				percent=.9;
+				percent = .9;
 				break;
 			case "w":
-				percent=1.2;
+				percent = 1.2;
 				break;
 			case "y":
-				percent=1;
+				percent = 1;
 				break;
 		}
 		return percent;
@@ -148,8 +152,8 @@
 	BCHWFontCharacterRenderer.renderB = function(context,character){
 		BCHWFontCharacterRenderer.renderRoundedRectToContext(context,character);
 		context.beginPath();
-		context.lineWidth=character.thickness;
-		context.strokeStyle=character.lineColor.getCanvasColorString();
+		context.lineWidth = character.thickness;
+		context.strokeStyle = character.lineColor.getCanvasColorString();
 		
 		var right = character.roundedRect.x+character.roundedRect.width;
 		var yMiddle = character.roundedRect.y+character.roundedRect.height/2;
@@ -169,11 +173,11 @@
 	BCHWFontCharacterRenderer.renderC=function(context,character){
 		BCHWFontCharacterRenderer.renderRoundedRectToContext(context,character);
 		context.beginPath();
-		context.lineWidth=character.thickness;
-		context.strokeStyle=character.lineColor.getCanvasColorString();
+		context.lineWidth = character.thickness;
+		context.strokeStyle = character.lineColor.getCanvasColorString();
 		
-		var right=character.roundedRect.x+character.roundedRect.width;
-		var yMiddle=character.roundedRect.y+character.roundedRect.height/2;
+		var right = character.roundedRect.x+character.roundedRect.width;
+		var yMiddle = character.roundedRect.y+character.roundedRect.height/2;
 		var xMiddle=character.roundedRect.x+character.roundedRect.width/2;
 		context.moveTo(right,yMiddle);
 		context.lineTo(xMiddle,yMiddle);

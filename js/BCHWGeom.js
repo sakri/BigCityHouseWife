@@ -1,281 +1,357 @@
 (function (window){
 
-	BCHWGeom=function(){}
+	var BCHWGeom = function(){};
 
+    //==================================================
+    //=====================::POINT::====================
+    //==================================================
+
+    BCHWGeom.Point = function (x,y){
+        this.x = isNaN(x) ? 0 : x;
+        this.y = isNaN(y) ? 0 : y;
+    };
+
+    BCHWGeom.Point.prototype.clone = function(){
+        return new BCHWGeom.Point(this.x,this.y);
+    };
+
+    BCHWGeom.Point.prototype.equals = function(point){
+        return this.x==point.x && this.y==point.y;
+    };
+
+    BCHWGeom.Point.prototype.toString = function(){
+        return "{x:"+this.x+" , y:"+this.y+"}";
+    };
+
+    BCHWGeom.distanceBetweenTwoPoints = function( point1, point2 ){
+        //console.log("Math.pow(point2.x - point1.x,2) : ",Math.pow(point2.x - point1.x,2));
+        return Math.sqrt( Math.pow(point2.x - point1.x,2) + Math.pow(point2.y - point1.y,2) );
+    };
+
+    BCHWGeom.angleBetweenTwoPoints = function(p1,p2){
+        return Math.atan2(p1.y-p2.y, p1.x-p2.x);
+    };
+
+    BCHWGeom.mirrorPointInRectangle = function(point,rect){
+        return new BCHWGeom.Point(rect.width-point.x,rect.height-point.y);
+    };
+
+    BCHWGeom.randomizePoint = function(point,randomValue){
+        return new BCHWGeom.Point(-randomValue+Math.random()*randomValue+point.x,-randomValue+Math.random()*randomValue+point.y);
+    };
+    
+    
 	//==================================================
 	//===================::RECTANGLE::==================
 	//==================================================
 
-	BCHWGeom.Rectangle=function (){
-		this.update(0,0,0,0);
-	}
+	BCHWGeom.Rectangle = function (x, y, width, height){
+		this.update(x, y, width, height);
+	};
 	
-	BCHWGeom.Rectangle.prototype.update=function(x,y,width,height){
-		if(!isNaN(x))this.x=x;
-		if(!isNaN(y))this.y=y;
-		if(!isNaN(width))this.width=width;
-		if(!isNaN(height))this.height=height;
-	}
+	BCHWGeom.Rectangle.prototype.update = function(x, y, width, height){
+		this.x = isNaN(x) ? 0 : x;
+		this.y = isNaN(y) ? 0 : y;
+		this.width = isNaN(width) ? 0 : width;
+		this.height = isNaN(height) ? 0 : height;
+	};
 	
-	BCHWGeom.Rectangle.prototype.updateToRect=function(rect){
-		this.x=rect.x;
-		this.y=rect.y;
-		this.width=rect.width;
-		this.height=rect.height;
-	}
+	BCHWGeom.Rectangle.prototype.updateToRect = function(rect){
+		this.x = rect.x;
+		this.y = rect.y;
+		this.width = rect.width;
+		this.height = rect.height;
+	};
 	
-	BCHWGeom.Rectangle.prototype.scaleX=function(scaleBy){
-		this.width*=scaleBy;
-	}
+	BCHWGeom.Rectangle.prototype.scaleX = function(scaleBy){
+		this.width *= scaleBy;
+	};
 	
-	BCHWGeom.Rectangle.prototype.scaleY=function(scaleBy){
-		this.height*=scaleBy;
-	}
+	BCHWGeom.Rectangle.prototype.scaleY = function(scaleBy){
+		this.height *= scaleBy;
+	};
 	
-	BCHWGeom.Rectangle.prototype.scale=function(scaleBy){
+	BCHWGeom.Rectangle.prototype.scale = function(scaleBy){
 		this.scaleX(scaleBy);
 		this.scaleY(scaleBy);
-	}
+	};
 
-	BCHWGeom.Rectangle.prototype.getRight=function(){
-		return this.x+this.width;
-	}
+	BCHWGeom.Rectangle.prototype.getRight = function(){
+		return this.x + this.width;
+	};
 	
-	BCHWGeom.Rectangle.prototype.getBottom=function(){
-		return this.y+this.height;
-	}
+	BCHWGeom.Rectangle.prototype.getBottom = function(){
+		return this.y + this.height;
+	};
+
+    BCHWGeom.Rectangle.prototype.getCenterX = function(){
+        return this.x + this.width/2;
+    };
+
+    BCHWGeom.Rectangle.prototype.containsPoint = function(x, y){
+        return x >= this.x && y >= this.y && x <= this.getRight() && y <= this.getBottom();
+    };
+    BCHWGeom.Rectangle.prototype.containsRect = function(rect){
+        return this.containsPoint(rect.x, rect.y) && this.containsPoint(rect.getRight(), rect.getBottom());
+    };
+    //questionable... center should not be relative to canvas itself...
+    BCHWGeom.Rectangle.prototype.getCenter = function(){
+        return new BCHWGeom.Point(this.x+this.width/2,this.y+this.height/2);
+    };
+
+    BCHWGeom.Rectangle.prototype.getCenterY=function(){
+        return this.y + this.height/2;
+    };
+	BCHWGeom.Rectangle.prototype.isSquare = function(){
+		return this.width == this.height;
+	};
+
+	BCHWGeom.Rectangle.prototype.isLandscape = function(){
+		return this.width > this.height;
+	};
+
+	BCHWGeom.Rectangle.prototype.isPortrait = function(){
+		return this.width < this.height;
+	};
 	
-	BCHWGeom.Rectangle.prototype.isSquare=function(){
-		return this.width==this.height;
-	}
-	BCHWGeom.Rectangle.prototype.isLandscape=function(){
-		return this.width>this.height;
-	}
-	BCHWGeom.Rectangle.prototype.isPortrait=function(){
-		return this.width<this.height;
-	}
+	BCHWGeom.Rectangle.prototype.getSmallerSide = function(){
+		return Math.min(this.width, this.height);
+	};
 	
-	BCHWGeom.Rectangle.prototype.getSmallerSide=function(){
-		return Math.min(this.width,this.height);
-	}
-	
-	BCHWGeom.Rectangle.prototype.getBiggerSide=function(){
+	BCHWGeom.Rectangle.prototype.getBiggerSide = function(){
 		return Math.max(this.width,this.height);
-	}
+	};
 	
-	BCHWGeom.Rectangle.prototype.getArea=function(){
-		return this.width*this.height;
-	}
+	BCHWGeom.Rectangle.prototype.getArea = function(){
+		return this.width * this.height;
+	};
 	
-	BCHWGeom.Rectangle.prototype.floor=function(){
-		this.x=Math.floor(this.x);
-		this.y=Math.floor(this.y);
-		this.width=Math.floor(this.width);
-		this.height=Math.floor(this.height);
-	}
+	BCHWGeom.Rectangle.prototype.floor = function(){
+		this.x = Math.floor(this.x);
+		this.y = Math.floor(this.y);
+		this.width = Math.floor(this.width);
+		this.height = Math.floor(this.height);
+	};
 	
-	BCHWGeom.Rectangle.prototype.ceil=function(){
-		this.x=Math.ceil(this.x);
-		this.y=Math.ceil(this.y);
-		this.width=Math.ceil(this.width);
-		this.height=Math.ceil(this.height);
-	}
-	BCHWGeom.Rectangle.prototype.round=function(){
+	BCHWGeom.Rectangle.prototype.ceil = function(){
+		this.x = Math.ceil(this.x);
+		this.y = Math.ceil(this.y);
+		this.width = Math.ceil(this.width);
+		this.height = Math.ceil(this.height);
+	};
+
+	BCHWGeom.Rectangle.prototype.round = function(){
 		this.x=Math.round(this.x);
 		this.y=Math.round(this.y);
 		this.width=Math.round(this.width);
 		this.height=Math.round(this.height);
-	}
-	BCHWGeom.Rectangle.prototype.roundIn=function(){
-		this.x=Math.ceil(this.x);
-		this.y=Math.ceil(this.y);
-		this.width=Math.floor(this.width);
-		this.height=Math.floor(this.height);
-	}
-	BCHWGeom.Rectangle.prototype.roundOut=function(){
-		this.x=Math.floor(this.x);
-		this.y=Math.floor(this.y);
-		this.width=Math.ceil(this.width);
-		this.height=Math.ceil(this.height);
-	}
+	};
+
+	BCHWGeom.Rectangle.prototype.roundIn = function(){
+		this.x = Math.ceil(this.x);
+		this.y = Math.ceil(this.y);
+		this.width = Math.floor(this.width);
+		this.height = Math.floor(this.height);
+	};
+
+	BCHWGeom.Rectangle.prototype.roundOut = function(){
+		this.x = Math.floor(this.x);
+		this.y = Math.floor(this.y);
+		this.width = Math.ceil(this.width);
+		this.height = Math.ceil(this.height);
+	};
 	
-	BCHWGeom.Rectangle.prototype.clone=function(){
-		return BCHWGeom.createRectangle(this.x,this.y,this.width,this.height);
-	}
+	BCHWGeom.Rectangle.prototype.clone = function(){
+		return new BCHWGeom.Rectangle(this.x, this.y, this.width, this.height);
+	};
 	
-	BCHWGeom.Rectangle.prototype.toString=function(){
+	BCHWGeom.Rectangle.prototype.toString = function(){
 		return "Rectangle{x:"+this.x+" , y:"+this.y+" , width:"+this.width+" , height:"+this.height+"}";
-	}
-	
-	BCHWGeom.createRectangle=function(x,y,width,height){
-		var rect=new BCHWGeom.Rectangle();
-		rect.update(x,y,width,height);
-		return rect;
-	}
+	};
 	
 	//==================================================
 	//===========::ROUNDED RECTANGLE::==================
 	//==================================================	
 
-	BCHWGeom.RoundedRectangle=function (){
-		this.radius=5
-	}	
+	BCHWGeom.RoundedRectangle = function (x, y , width, height, radius){
+        BCHWGeom.Rectangle.call(this, x, y, width, height);
+		this.radius = isNaN(radius) ? 5 : radius;
+	};
+
+    //subclass extends superclass
+    BCHWGeom.RoundedRectangle.prototype = Object.create(BCHWGeom.Rectangle.prototype);
+    BCHWGeom.RoundedRectangle.prototype.constructor = BCHWGeom.Rectangle;
 		
-	BCHWGeom.RoundedRectangle.prototype=new BCHWGeom.Rectangle();
-		
-	BCHWGeom.RoundedRectangle.prototype.toString=function(){
+	BCHWGeom.RoundedRectangle.prototype.toString = function(){
 		return "RoundedRectangle{x:"+this.x+" , y:"+this.y+" , width:"+this.width+" , height:"+this.height+" , radius:"+this.radius+"}";
-	}
+	};
 	
-	BCHWGeom.RoundedRectangle.prototype.clone=function(){
-		return BCHWGeom.createRoundedRectangle(this.x,this.y,this.width,this.height,this.radius);
-	}
-	
-	BCHWGeom.createRoundedRectangle=function(x,y,width,height,radius){
-		var rect=new BCHWGeom.RoundedRectangle();
-		if(!isNaN(x))rect.x=x;
-		if(!isNaN(y))rect.y=y;
-		if(!isNaN(width))rect.width=width;
-		if(!isNaN(height))rect.height=height;
-		if(!isNaN(radius))rect.radius=radius;
-		return rect;
-	}
-	
+	BCHWGeom.RoundedRectangle.prototype.clone = function(){
+		return new BCHWGeom.RoundedRectangle(this.x,this.y,this.width,this.height,this.radius);
+	};
 	
 
 	//==================================================
 	//==============::RECTANGLE UTIL::==================
 	//==================================================
 	
-	//TODO: Move this elsewhere. Find a way to deal with small files that have dependencies
-	//is the only way to make sure they are imported in the right order?
-	//can javascript files import other javascript files? ANSWER : Not in a clean way
+	BCHWGeom.RectangleUtil=function (){};
 	
-	BCHWGeom.RectangleUtil=function (){}
+	BCHWGeom.RectangleUtil.getBiggerRectangle = function(rectA, rectB){
+		return rectA.getArea() > rectB.getArea() ? rectA : rectB;
+	};
 	
-	BCHWGeom.RectangleUtil.getBiggerRectangle=function(rectA,rectB){
-		return (rectA.getArea() > rectB.getArea() ? rectA : rectB);
-	}
-	
-	BCHWGeom.RectangleUtil.getSmallerRectangle=function(rectA,rectB){
+	BCHWGeom.RectangleUtil.getSmallerRectangle = function(rectA, rectB){
 		return (rectA.getArea() < rectB.getArea() ? rectA : rectB);
-	}
+	};
 	
-	BCHWGeom.RectangleUtil.isBiggerThan=function(rectA,rectB){
+	BCHWGeom.RectangleUtil.isBiggerThan = function(rectA, rectB){
 		return rectA.getArea() > rectB.getArea();
-	}
+	};
 	
-	BCHWGeom.RectangleUtil.isBiggerThanOrEqual=function(rectA,rectB){
+	BCHWGeom.RectangleUtil.isBiggerThanOrEqual = function(rectA, rectB){
 		return rectA.getArea() >= rectB.getArea();
-	}
+	};
 		
-	BCHWGeom.RectangleUtil.isSmallerThan=function(rectA,rectB){
+	BCHWGeom.RectangleUtil.isSmallerThan = function(rectA, rectB){
 		return rectA.getArea() < rectB.getArea();
-	}
+	};
 	
-	BCHWGeom.RectangleUtil.isSmallerThanOrEqual=function(rectA,rectB){
+	BCHWGeom.RectangleUtil.isSmallerThanOrEqual = function(rectA, rectB){
 		return rectA.getArea() <= rectB.getArea();
-	}
+	};
 	
-	BCHWGeom.RectangleUtil.isEqual=function(rectA,rectB){
+	BCHWGeom.RectangleUtil.isEqual = function(rectA, rectB){
 		return BCHWGeom.RectangleUtil.hasEqualPosition(rectA,rectB) && BCHWGeom.RectangleUtil.hasEqualSides(rectA,rectB);
-	}
+	};
 	
-	BCHWGeom.RectangleUtil.hasEqualPosition=function(rectA,rectB){
+	BCHWGeom.RectangleUtil.hasEqualPosition = function(rectA, rectB){
 		return rectA.x==rectB.x && rectA.y==rectB.y;
-	}
+	};
 	
-	BCHWGeom.RectangleUtil.hasEqualSides=function(rectA,rectB){
+	BCHWGeom.RectangleUtil.hasEqualSides = function(rectA, rectB){
 		return rectA.width==rectB.width && rectA.height==rectB.height;
-	}
+	};
 	
-	BCHWGeom.RectangleUtil.hasEqualArea=function(rectA,rectB){
+	BCHWGeom.RectangleUtil.hasEqualArea = function(rectA,rectB){
 		return rectA.getArea() == rectB.getArea();
-	}
+	};
 	
-	BCHWGeom.RectangleUtil.getCenterX=function(rect){
+	BCHWGeom.RectangleUtil.getCenterX = function(rect){
 		return rect.x+rect.width/2;
-	}
+	};
 	
 	BCHWGeom.RectangleUtil.getCenterY=function(rect){
 		return rect.y+rect.height/2;
-	}
+	};
 
-	BCHWGeom.RectangleUtil.createRandomXIn=function(rect){
-		return BCHWMathUtil.getRandomNumberInRange(rect.x,rect.getRight);
-	}
-	BCHWGeom.RectangleUtil.createRandomYIn=function(rect){
-		return BCHWMathUtil.getRandomNumberInRange(rect.y,rect.getBottom);
-	}
-	
-	BCHWGeom.RectangleUtil.createRandomRectangleIn=function(rect){
-		var w=Math.random()*rect.width;
-		var h=Math.random()*rect.height;
-		var x=Math.random()*(rect.width-w);
-		var y=Math.random()*(rect.height-h);
-		return BCHWGeom.createRectangle(rect.x+x,rect.y+y,w,h);
-	}
-	
-	BCHWGeom.RectangleUtil.createRandomIntegerRectangleIn=function(rect){
-		var rect=BCHWGeom.RectangleUtil.createRandomRectangleIn(rect);
-		rect.round();
-		return rect;
-	}
+	BCHWGeom.RectangleUtil.createRandomXIn = function(rect){
+		return BCHWMathUtil.getRandomNumberInRange(rect.x, rect.getRight());
+	};
 
-	BCHWGeom.RectangleUtil.horizontalAlignLeft=function(staticRect,rectToAlign){
-		rectToAlign.x=staticRect.x;
-	}
-	BCHWGeom.RectangleUtil.horizontalAlignMiddle=function(staticRect,rectToAlign){
-		rectToAlign.x=BCHWGeom.RectangleUtil.getCenterX(staticRect)-rectToAlign.width/2;
-	}
-	BCHWGeom.RectangleUtil.horizontalAlignRight=function(staticRect,rectToAlign){
-		rectToAlign.x=staticRect.getRight()-rectToAlign.width;
-	}
-	
-	BCHWGeom.RectangleUtil.verticalAlignTop=function(staticRect,rectToAlign){
-		rectToAlign.y=staticRect.y;
-	}
-	BCHWGeom.RectangleUtil.verticalAlignMiddle=function(staticRect,rectToAlign){
-		rectToAlign.y=BCHWGeom.RectangleUtil.getCenterY(staticRect)-rectToAlign.height/2;
-	}
-	BCHWGeom.RectangleUtil.verticalAlignBottom=function(staticRect,rectToAlign){
-		rectToAlign.y=staticRect.getBottom()-rectToAlign.height;
-	}
+	BCHWGeom.RectangleUtil.createRandomYIn = function(rect){
+		return BCHWMathUtil.getRandomNumberInRange(rect.y,rect.getBottom());
+	};
 
-	BCHWGeom.RectangleUtil.scaleRectToPortraitFit=function(staticRect,rectToScale){
-		BCHWGeom.RectangleUtil.scaleRectToHeight(rectToScale,staticRect.height);
-	}
+    BCHWGeom.RectangleUtil.rectanglesIntersect = function(rectA, rectB){
+        return  rectA.containsPoint(rectB.x, rectB.y) ||
+                rectA.containsPoint(rectB.getRight(), rectB.y) ||
+                rectA.containsPoint(rectB.getRight(), rectB.getBottom()) ||
+                rectA.containsPoint(rectB.x, rectB.getBottom());
+    };
+
+    BCHWGeom.RectangleUtil.getIntersectingRectangle = function(rectA, rectB){
+        //console.log("BCHWGeom.RectangleUtil.getIntersectingRectangle()", rectA.toString(), rectB.toString());
+        if(!BCHWGeom.RectangleUtil.rectanglesIntersect(rectA,rectB)){
+            console.log("\tno intersection found");
+            return null;
+        }
+        if(rectA.containsRect(rectB)){
+            return rectB;
+        }
+        if(rectB.containsRect(rectA)){
+            return rectA;
+        }
+
+        var x1 = Math.max(rectA.x, rectB.x),
+            y1 = Math.max(rectA.y, rectB.y),
+            x2 = Math.min(rectA.getRight(), rectB.getRight()),
+            y2 = Math.min(rectA.getBottom(), rectB.getBottom());
+        return new BCHWGeom.Rectangle(x1, y1, x2 - x1, y2 - y1);
+    };
 	
-	BCHWGeom.RectangleUtil.scaleRectToLandscapeFit=function(staticRect,rectToScale){
-		BCHWGeom.RectangleUtil.scaleRectToWidth(rectToScale,staticRect.width);
-	}
+	BCHWGeom.RectangleUtil.createRandomRectangleIn = function(rect){
+		var w = Math.random()*rect.width;
+		var h = Math.random()*rect.height;
+		var x = Math.random()*(rect.width-w);
+		var y = Math.random()*(rect.height-h);
+		return new BCHWGeom.Rectangle(rect.x+x,rect.y+y,w,h);
+	};
 	
-	BCHWGeom.RectangleUtil.scaleRectToHeight=function(rect,height){
-		rect.width*=(height/rect.height);
-		rect.height=height;
-	}
+	BCHWGeom.RectangleUtil.createRandomIntegerRectangleIn = function(rect){
+		var randomRect = BCHWGeom.RectangleUtil.createRandomRectangleIn(rect);
+        randomRect.round();
+		return randomRect;
+	};
+
+	BCHWGeom.RectangleUtil.horizontalAlignLeft = function(staticRect,rectToAlign){
+		rectToAlign.x = staticRect.x;
+	};
+
+	BCHWGeom.RectangleUtil.horizontalAlignMiddle = function(staticRect, rectToAlign){
+		rectToAlign.x = BCHWGeom.RectangleUtil.getCenterX(staticRect) - rectToAlign.width/2;
+	};
+
+	BCHWGeom.RectangleUtil.horizontalAlignRight = function(staticRect,rectToAlign){
+		rectToAlign.x = staticRect.getRight() - rectToAlign.width;
+	};
 	
-	BCHWGeom.RectangleUtil.scaleRectToWidth=function(rect,width){
-		rect.height*=(width/rect.width);
-		rect.width=width;
-	}
+	BCHWGeom.RectangleUtil.verticalAlignTop = function(staticRect, rectToAlign){
+		rectToAlign.y = staticRect.y;
+	};
+
+	BCHWGeom.RectangleUtil.verticalAlignMiddle = function(staticRect, rectToAlign){
+		rectToAlign.y = BCHWGeom.RectangleUtil.getCenterY(staticRect) - rectToAlign.height/2;
+	};
+
+	BCHWGeom.RectangleUtil.verticalAlignBottom = function(staticRect, rectToAlign){
+		rectToAlign.y = staticRect.getBottom() - rectToAlign.height;
+	};
+
+	BCHWGeom.RectangleUtil.scaleRectToPortraitFit = function(staticRect, rectToScale){
+		BCHWGeom.RectangleUtil.scaleRectToHeight(rectToScale, staticRect.height);
+	};
 	
-	BCHWGeom.RectangleUtil.scaleRectToBestFit=function(staticRect,rectToScale){
-		var copy=rectToScale.clone();
-		BCHWGeom.RectangleUtil.scaleRectToPortraitFit(staticRect,copy);
-		if(copy.width>staticRect.width){
-			BCHWGeom.RectangleUtil.scaleRectToLandscapeFit(staticRect,rectToScale);
+	BCHWGeom.RectangleUtil.scaleRectToLandscapeFit = function(staticRect, rectToScale){
+		BCHWGeom.RectangleUtil.scaleRectToWidth(rectToScale, staticRect.width);
+	};
+	
+	BCHWGeom.RectangleUtil.scaleRectToHeight = function(rect, height){
+		rect.width *= (height/rect.height);
+		rect.height = height;
+	};
+	
+	BCHWGeom.RectangleUtil.scaleRectToWidth = function(rect, width){
+		rect.height *= (width/rect.width);
+		rect.width = width;
+	};
+	
+	BCHWGeom.RectangleUtil.scaleRectToBestFit = function(staticRect, rectToScale){
+		var copy = rectToScale.clone();
+		BCHWGeom.RectangleUtil.scaleRectToPortraitFit(staticRect, copy);
+		if(copy.width > staticRect.width){
+			BCHWGeom.RectangleUtil.scaleRectToLandscapeFit(staticRect, rectToScale);
 		}else{
 			rectToScale.updateToRect(copy);
 		}
-	}
+	};
 	
-	BCHWGeom.RectangleUtil.scaleRectInto=function(staticRect,rectToScale){
+	BCHWGeom.RectangleUtil.scaleRectInto = function(staticRect,rectToScale){
 		BCHWGeom.RectangleUtil.scaleRectToBestFit(staticRect,rectToScale);
 		BCHWGeom.RectangleUtil.verticalAlignMiddle(staticRect,rectToScale);
 		BCHWGeom.RectangleUtil.horizontalAlignMiddle(staticRect,rectToScale);
-	}
+	};
 	
-	window.BCHWGeom=BCHWGeom;
+	window.BCHWGeom = BCHWGeom;
 	
 }(window));
