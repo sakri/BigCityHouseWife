@@ -63,6 +63,10 @@ html{
 }
 
 
+footer{
+    display: none;
+}
+
 /* ---------------------- RESPONSIVE ---------------------- */
 
 @media only screen and (max-width: 1000px) {

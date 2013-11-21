@@ -5,16 +5,18 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
 
-    <meta name="description" content="Big City House Wife" />
-    <meta name="keywords" content="Cartoon, Big City House Wife, Blog, Mommy Blog, Social Commentary" />
+    <meta name="description" content="Trials and tribulations of a Big City House Wife : cartoons, comics, poems and games " />
+    <meta name="keywords" content="Cartoon, Big City House Wife, Blog, Mommy Blog, Social Commentary, humor, comic, family, kids, funny, poem, poems" />
     <meta name="author" content="Melissa Beltgens, Sakri Rosenstrom" />
 
     <title>Big City House Wife</title>
 
+    <!-- all source code by sakri.net , check it out on github : https://github.com/sakri/BigCityHouseWife -->
+
     <link rel="stylesheet" type="text/css" href="css/bigCityHouseWife.min.css">
 
 
-    <!--<script type="text/javascript" src="js/TweetsManager.js" ></script>
+    <script type="text/javascript" src="js/TweetsManager.js" ></script>
     <script type="text/javascript" src="js/BCHWMathUtil.js" ></script>
     <script type="text/javascript" src="js/BCHWGeom.js" ></script>
     <script type="text/javascript" src="js/BCHWArrayUtil.js" ></script>
@@ -24,23 +26,23 @@
     <script type="text/javascript" src="js/BCHWLogo.js" ></script>
     <script type="text/javascript" src="js/BCHWCharacters.js" ></script>
     <script type="text/javascript" src="js/BCHWSpeechBubble.js" ></script>
-    <script type="text/javascript" src="js/BCHWMain.js" ></script>-->
+    <script type="text/javascript" src="js/BCHWMain.js" ></script>
 
 
-    <script type="text/javascript" src="js/TweetsManager.min.js" ></script>
-    <script type="text/javascript" src="js/BCHWMathUtil.min.js" ></script>
-    <script type="text/javascript" src="js/BCHWGeom.min.js" ></script>
-    <script type="text/javascript" src="js/BCHWArrayUtil.min.js" ></script>
-    <script type="text/javascript" src="js/BCHWLayout.min.js" ></script>
-    <script type="text/javascript" src="js/BCHWColor.min.js" ></script>
-    <script type="text/javascript" src="js/BCHWFont.min.js" ></script>
-    <script type="text/javascript" src="js/BCHWLogo.min.js" ></script>
-    <script type="text/javascript" src="js/BCHWCharacters.min.js" ></script>
-    <script type="text/javascript" src="js/BCHWSpeechBubble.min.js" ></script>
-    <script type="text/javascript" src="js/BCHWMain.min.js" ></script>
+    <!--<script type="text/javascript" src="js/TweetsManager.min.js" ></script>
+     <script type="text/javascript" src="js/BCHWMathUtil.min.js" ></script>
+     <script type="text/javascript" src="js/BCHWGeom.min.js" ></script>
+     <script type="text/javascript" src="js/BCHWArrayUtil.min.js" ></script>
+     <script type="text/javascript" src="js/BCHWLayout.min.js" ></script>
+     <script type="text/javascript" src="js/BCHWColor.min.js" ></script>
+     <script type="text/javascript" src="js/BCHWFont.min.js" ></script>
+     <script type="text/javascript" src="js/BCHWLogo.min.js" ></script>
+     <script type="text/javascript" src="js/BCHWCharacters.min.js" ></script>
+     <script type="text/javascript" src="js/BCHWSpeechBubble.min.js" ></script>
+     <script type="text/javascript" src="js/BCHWMain.min.js" ></script>-->
 
 
-    <!--<script type="text/javascript" src="js/BCHWTests.js" ></script>-->
+     <!--<script type="text/javascript" src="js/BCHWTests.js" ></script>-->
 
     <script type="text/javascript">
 
@@ -52,8 +54,16 @@
 
         ga('create', 'UA-38074345-1', 'bigcityhousewife.net');
 
-        if(location.hostname && location.hostname.toLowerCase().indexOf("bigcityhousewife.net")>-1){
+        if(location.hostname && location.hostname.toLowerCase().indexOf("bigcityhousewife")>-1){
             ga('send', 'pageview');
+        }
+
+        function tweetLinkClickHandler(url){
+            //console.log("tweetLinkClickHandler()",url);
+            if(location.hostname && location.hostname.toLowerCase().indexOf("bigcityhousewife")>-1){
+                ga("send", "event", "tweetClick", "mom");
+            }
+            window.open(url,'_blank')
         }
 
         //MAIN APP
@@ -86,9 +96,6 @@
         function speechBubbleContainerMouseOverHandler(){
             main.speechBubbleContainerMouseOverHandler();
         }
-        function speechBubbleContainerMouseOutHandler(event){
-            main.speechBubbleContainerMouseOutHandler(event);
-        }
 
     </script>
 
@@ -97,7 +104,7 @@
 
     <div id="homeCanvasContainer"></div>
 
-    <div id="speechBubbleContainer" onmouseover="speechBubbleContainerMouseOverHandler()" onmouseout="speechBubbleContainerMouseOutHandler(event)"></div>
+    <div id="speechBubbleContainer" onmouseover="speechBubbleContainerMouseOverHandler()" ></div>
 
     <!-- link to blog and social media -->
     <span id="BCHWLinks">
@@ -121,6 +128,10 @@
             </a>
         </div>
     </span>
+
+    <footer>
+        <p>© 2005-2013 Big City House Wife All Rights Reserved.  All drawings and content by Melissa Beltgens.</p>
+    </footer>
 
 </body>
 </html>

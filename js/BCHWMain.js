@@ -4,7 +4,7 @@
 
 	function BCHWMain(){
 		this.margin = .05;
-        this.momWidth = .2;
+        this.momProportions = new BCHWGeom.Rectangle(0, 0, 200, 250);
         this.lineThickness = 4;
         this.resizeTimeoutId = -1;
         this.bubbleArrowHeight = 20;
@@ -13,6 +13,7 @@
     //static variables
     BCHWMain.REFRESH_AFTER_RESIZE_INTERVAL = 300;//wait this long to rerender graphics after last resize
     BCHWMain.TWEET_INTERVAL = 5000;//characters display a tweet at this interval
+    BCHWMain.MOUSEOVER_TWEET_INTERVAL = 8000;//tweet stops for this amount of time when hovering over with mouse
 
     BCHWMain.prototype.init = function(canvasContainer, speechBubbleContainer){
         //console.log("BCHWMain.init()");
@@ -22,9 +23,10 @@
         this.context.lineCap="round";
         this.canvasContainer.appendChild(this.canvas);
         this.logo = new BCHWLogo(this.canvas);
-        this.logo.lineThickness = this.lineThickness;
         this.mom = new BCHWMom(this.canvas);
-        this.mom.lineThickness = this.lineThickness;
+        this.girl = new BCHWGirl(this.canvas);
+        this.boy = new BCHWBoy(this.canvas);
+        this.dad = new BCHWDad(this.canvas);
         this.render();
         this.tweetsManager = new TweetsManager();
         var scope = this;
@@ -61,27 +63,65 @@
 		this.clearContext();
         //console.log("\t canvas width, height  : ",this.canvas.width, this.canvas.height);
 
-        var boundsX = this.canvas.width*this.margin;
-        var boundsY = this.canvas.height*this.margin;
-        var renderBounds = new BCHWGeom.Rectangle(boundsX, boundsY, this.canvas.width-boundsX*2, this.canvas.height-boundsY*2);
-        //console.log("\trenderBounds : ",renderBounds.toString());
+        var boundsX,boundsY;
+        if(this.canvasContainer.clientWidth > 800){
+            this.lineThickness = 4;
+            boundsX = 4;
+            boundsY = 4;
+        }else{
+            this.lineThickness = 2;
+            boundsX = this.canvas.width*this.margin;
+            boundsY = this.canvas.height*this.margin;
+        }
 
-        this.lineThickness = renderBounds.width > 700 ? 4 : 2;
-        //console.log("lineThickness", lineThickness);
+        var canvasBounds = new BCHWGeom.Rectangle(boundsX, boundsY, this.canvas.width-boundsX*2, this.canvas.height-boundsY*2);
+        var renderBounds = new BCHWGeom.Rectangle(0,0,800,200);
+        BCHWGeom.RectangleUtil.scaleRectInto(canvasBounds,renderBounds);
+        BCHWGeom.RectangleUtil.verticalAlignMiddle(canvasBounds,renderBounds);
+
+        this.logoBounds = this.logo.getContentRect(renderBounds);
+        this.logoBounds.height *= 2;
 
         //MOM
-        this.momBounds = new BCHWGeom.Rectangle(renderBounds.x, renderBounds.y, renderBounds.width*this.momWidth, renderBounds.height);
-        //this.context.fillStyle = "#FF0000";
-        //this.context.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        var momHeight = this.logoBounds.height + this.logoBounds.height/8;
+        var momScale = momHeight / this.momProportions.height;
+        this.momBounds = new BCHWGeom.Rectangle(renderBounds.x, renderBounds.y, this.momProportions.width*momScale, momHeight);
+        var totalBounds = new BCHWGeom.Rectangle(0, 0, this.logoBounds.width+this.momBounds.width*2, momHeight);
+        BCHWGeom.RectangleUtil.scaleRectInto(renderBounds, totalBounds);
+        momScale = totalBounds.height / this.momProportions.height;
+        this.momBounds.height = totalBounds.height;
+        this.momBounds.width = this.momProportions.width*momScale;
         this.mom.render(this.momBounds, this.lineThickness);
-        //console.log("\t",bounds.toString());
+
+        //DAD
+        this.dadBounds = new BCHWGeom.Rectangle(renderBounds.getRight()-this.mom.width, this.mom.y, this.mom.width, this.mom.height);
+        this.dad.render(this.dadBounds, this.lineThickness);
+
 
         //LOGO
-        this.logoBounds = new BCHWGeom.Rectangle(   this.momBounds.getRight()+this.lineThickness, renderBounds.y,
-                                                    renderBounds.getRight()-this.momBounds.getRight()-this.lineThickness, renderBounds.height);
+        this.logoBounds.width= totalBounds.width-this.mom.width*2 - this.mom.width/4;
+        this.logoBounds.height= totalBounds.height;
+        this.logoBounds.x = this.mom.getRight()+ this.mom.width/8;
+        this.logoBounds.y = this.mom.getBottom()-totalBounds.height;
         this.logo.render(this.logoBounds, this.lineThickness);
         //console.log("\t",bounds.toString());
 
+        var charBounds = this.logo.getCharacterBounds(2,0);
+        this.girlBounds = charBounds.clone();
+        this.girlBounds.width*=.9;
+        this.girlBounds.height*=.8;
+        BCHWGeom.RectangleUtil.horizontalAlignMiddle(charBounds, this.girlBounds);
+        BCHWGeom.RectangleUtil.verticalAlignBottom(charBounds, this.girlBounds);
+        this.girlBounds.y -= (charBounds.height+this.lineThickness);
+        this.girl.render(this.girlBounds, this.lineThickness);
+
+        charBounds = this.logo.getCharacterBounds(2,1);
+        this.boyBounds = charBounds.clone();
+        this.boyBounds.width*=.9;
+        this.boyBounds.height*=1.1;
+        BCHWGeom.RectangleUtil.verticalAlignBottom(charBounds, this.boyBounds);
+        this.boyBounds.y -= (charBounds.height+this.lineThickness);
+        this.boy.render(this.boyBounds, this.lineThickness);
 	};
 
 
@@ -105,7 +145,10 @@
                                                     this.speechBubbleContainer.clientWidth,  this.speechBubbleContainer.clientHeight+this.bubbleArrowHeight);
         this.mom.render(this.momBounds,this.lineThickness);
         var scope = this;
-        this.speechBubble.render(this.bubbleBounds, this.lineThickness, function(){scope.speechBubbleCompleteHandler()} )
+        this.speechBubble.render(this.bubbleBounds, this.lineThickness, function(){scope.speechBubbleCompleteHandler()} );
+        this.girl.render(this.girlBounds, this.lineThickness);
+        this.boy.render(this.boyBounds, this.lineThickness);
+        this.dad.render(this.dadBounds, this.lineThickness);
     }
 
     BCHWMain.prototype.speechBubbleCompleteHandler = function(){
@@ -113,26 +156,17 @@
         this.setTwitterTalkTimeout();
     }
 
-    BCHWMain.prototype.setTwitterTalkTimeout = function(){
+    BCHWMain.prototype.setTwitterTalkTimeout = function(interval){
         //console.log("BCHWMain.setTwitterTalkTimeout()");
         var scope = this;
         this.twitterTalkTimeout = setTimeout(function(){
             scope.showNextTweet();
-        }, BCHWMain.TWEET_INTERVAL );
+        }, isNaN(interval) ? BCHWMain.TWEET_INTERVAL : interval );
     }
 
     BCHWMain.prototype.speechBubbleContainerMouseOverHandler = function(){
         clearTimeout (this.twitterTalkTimeout);
-    }
-    //this is necessary because mouseOut is called when mouse goes over the text of a tweet
-    //doesn't work when mouse moves out from right side of bubble?!
-    BCHWMain.prototype.speechBubbleContainerMouseOutHandler = function(event){
-        var rect = new BCHWGeom.Rectangle(  this.speechBubbleContainer.offsetLeft, this.speechBubbleContainer.offsetTop,
-                                            this.speechBubbleContainer.clientWidth, this.speechBubbleContainer.clientHeight);
-        //console.log("BCHWMain.speechBubbleContainerMouseOutHandler()", rect.toString(), event.clientX, event.clientY )
-        if(!rect.containsPoint(event.clientX, event.clientY)){
-            this.setTwitterTalkTimeout();
-        }
+        this.setTwitterTalkTimeout(BCHWMain.MOUSEOVER_TWEET_INTERVAL);
     }
 
 	window.BCHWMain = BCHWMain;

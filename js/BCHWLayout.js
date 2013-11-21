@@ -100,7 +100,7 @@
 	};
 	
 	BCHWFontLayoutRect.prototype.layoutCharacters_horizontalAlignLeft = function(){
-		console.log("layoutCharacters_horizontalAlignLeft()");
+		//console.log("layoutCharacters_horizontalAlignLeft()");
 		//console.log("layoutRectangle : "+this.toString());
 		var currentX=this.x+0;
 		//console.log("currentX : "+currentX);
@@ -120,7 +120,7 @@
 	};
 	
 	BCHWFontLayoutRect.prototype.layoutCharacters_horizontalAlignRight = function(){
-        console.log("layoutCharacters_horizontalAlignRight()");
+        //console.log("layoutCharacters_horizontalAlignRight()");
         //console.log("layoutRectangle : "+this.toString());
         var currentX = this.getRight();
         //console.log("currentX : "+currentX);

@@ -71,23 +71,34 @@
         this.currentRenderIndex++;
     };
 
-    BCHWLogo.prototype.updateLayout = function(bounds){
-
+    BCHWLogo.prototype.getContentRect = function(bounds){
         //100 height is hardcoded... hmm
         var layoutRect = BCHWGeom.RectangleUtil.getBiggerRectangle(this.row1.getContentRect(100), this.row2.getContentRect(100));
         BCHWGeom.RectangleUtil.scaleRectToBestFit(bounds,layoutRect);
-        BCHWGeom.RectangleUtil.horizontalAlignMiddle(bounds,layoutRect);
+        return layoutRect;
+    }
 
-        layoutRect.y = BCHWGeom.RectangleUtil.getCenterY(bounds)-layoutRect.height;
-        this.row1.updateToRect(layoutRect);
-        this.row1.layoutCharacters();
-
-        layoutRect.y = BCHWGeom.RectangleUtil.getCenterY(bounds);
+    BCHWLogo.prototype.updateLayout = function(bounds){
+        //100 height is hardcoded... hmm
+        var layoutRect = BCHWGeom.RectangleUtil.getBiggerRectangle(this.row1.getContentRect(100), this.row2.getContentRect(100));
+        BCHWGeom.RectangleUtil.scaleRectToBestFit(bounds, layoutRect);
+        BCHWGeom.RectangleUtil.horizontalAlignMiddle(bounds, layoutRect);
+        layoutRect.y = bounds.getBottom()-layoutRect.height;
         this.row2.updateToRect(layoutRect);
         this.row2.layoutCharacters();
 
+        layoutRect.y -= layoutRect.height;
+        this.row1.updateToRect(layoutRect);
+        this.row1.layoutCharacters();
+
         this.allCharacters = this.row1.characters.concat(this.row2.characters);
     };
+
+    BCHWLogo.prototype.getCharacterBounds = function(rowIndex, characterIndex){
+        var row = this["row"+rowIndex];
+        var character = row.characters[characterIndex];
+        return character.roundedRect;
+    }
 
     window.BCHWLogo = BCHWLogo;
 

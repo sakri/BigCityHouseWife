@@ -5,7 +5,7 @@
 		this.width = 1;
 		this.color = new BCHWColor.createRGBAColor();
 		this.thickness = 1;
-		this.roundedRect;
+		this.roundedRect;//TODO extend a rect instead of having a property
 	};
 	
 	BCHWFontCharacter.prototype.renderFunction = function(context,character){
