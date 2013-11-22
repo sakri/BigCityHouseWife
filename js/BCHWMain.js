@@ -28,7 +28,7 @@
         this.boy = new BCHWBoy(this.canvas);
         this.dad = new BCHWDad(this.canvas);
         this.render();
-        this.tweetsManager = new TweetsManager();
+        this.tweetsManager = new TweetsManager([this.mom,this.girl,this.boy,this.dad]);
         var scope = this;
         this.tweetsManager.loadTweets(function(){scope.tweetsLoadedHandler()});
         this.speechBubbleContainer = speechBubbleContainer;
@@ -130,25 +130,61 @@
         this.showNextTweet();
     }
 
-    BCHWMain.prototype.showNextTweet = function(){
-        //console.log("BCHWMain.showNextTweet()");
-        this.speechBubbleContainer.style.opacity = 0;
-        var tweet = this.tweetsManager.getNextTweet();
-        //console.log(tweet);
-        this.speechBubbleContainer.innerHTML = "<p>"+tweet+"</p>";
-        this.speechBubbleContainer.style.maxWidth = (this.logoBounds.width+this.momBounds.width/2)+"px";
-        var x = this.canvasContainer.offsetLeft + this.mom.getCenterX();
-        var y = this.canvasContainer.offsetTop + this.mom.y - this.speechBubbleContainer.clientHeight-this.bubbleArrowHeight - this.speechBubble.padding*2;
-        this.speechBubbleContainer.style.left = x+"px";
-        this.speechBubbleContainer.style.top = y+"px";
-        this.bubbleBounds = new BCHWGeom.Rectangle( this.mom.getCenterX(), this.mom.y - this.speechBubbleContainer.clientHeight-this.bubbleArrowHeight - this.speechBubble.padding*2,
-                                                    this.speechBubbleContainer.clientWidth,  this.speechBubbleContainer.clientHeight+this.bubbleArrowHeight);
+    BCHWMain.prototype.renderCharacters = function(){
         this.mom.render(this.momBounds,this.lineThickness);
-        var scope = this;
-        this.speechBubble.render(this.bubbleBounds, this.lineThickness, function(){scope.speechBubbleCompleteHandler()} );
         this.girl.render(this.girlBounds, this.lineThickness);
         this.boy.render(this.boyBounds, this.lineThickness);
         this.dad.render(this.dadBounds, this.lineThickness);
+    }
+
+    BCHWMain.prototype.showNextTweet = function(){
+        this.speechBubbleContainer.style.opacity = 0;
+        var character = this.tweetsManager.getNextTweeter();
+        var tweet = this.tweetsManager.processTweetLinks(character.tweets[character.tweetIndex].text);
+        this.speechBubbleContainer.innerHTML = "<p>"+tweet+"</p>";
+        this.speechBubbleContainer.style.maxWidth = (this.logoBounds.width+this.momBounds.width/2)+"px";
+
+        var x, triangleX;
+        if(character == this.dad){
+            x = this.canvasContainer.offsetLeft + this.dad.getCenterX() - this.speechBubbleContainer.clientWidth;
+        }else{
+            x = this.canvasContainer.offsetLeft + this.mom.getCenterX();
+        }
+        var y = this.canvasContainer.offsetTop + this.mom.y - this.speechBubbleContainer.clientHeight-this.bubbleArrowHeight - this.speechBubble.padding*2;
+
+        this.speechBubbleContainer.style.left = x+"px";
+        this.speechBubbleContainer.style.top = y+"px";
+
+        if(character == this.dad){
+            this.bubbleBounds = new BCHWGeom.Rectangle( this.dad.getCenterX() - this.speechBubbleContainer.clientWidth,
+                this.mom.y - this.speechBubbleContainer.clientHeight-this.bubbleArrowHeight - this.speechBubble.padding*2,
+                this.speechBubbleContainer.clientWidth,
+                this.speechBubbleContainer.clientHeight+this.bubbleArrowHeight);
+        }else{
+            this.bubbleBounds = new BCHWGeom.Rectangle( this.mom.getCenterX(),
+                this.mom.y - this.speechBubbleContainer.clientHeight-this.bubbleArrowHeight - this.speechBubble.padding*2,
+                this.speechBubbleContainer.clientWidth,
+                this.speechBubbleContainer.clientHeight+this.bubbleArrowHeight);
+        }
+
+
+        switch(character){
+            case this.dad:
+                triangleX = this.dad.x + this.dad.width*.25;
+                break;
+            case this.boy:
+                triangleX = this.boy.getCenterX();
+                break;
+            case this.girl:
+                triangleX = this.girl.getCenterX();
+                break;
+            default:
+                triangleX = this.mom.x+this.mom.width*.75;
+                break;
+        }
+        this.renderCharacters();
+        var scope = this;
+        this.speechBubble.render(this.bubbleBounds, triangleX, this.lineThickness, function(){scope.speechBubbleCompleteHandler()} );
     }
 
     BCHWMain.prototype.speechBubbleCompleteHandler = function(){

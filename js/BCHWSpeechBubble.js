@@ -21,8 +21,9 @@
 
     BCHWSpeechBubble.ANIMATE_INTERVAL = 20;//
 
-    BCHWSpeechBubble.prototype.render = function(bounds, lineThickness, completeCallback){
+    BCHWSpeechBubble.prototype.render = function(bounds, triangleX, lineThickness, completeCallback){
         //console.log("BCHWSpeechBubble.render()", bounds.toString());
+        this.triangleX = triangleX;
         this.completeCallback = completeCallback ? completeCallback : null;
         this.clear();//use previous dimensions
         this.x = bounds.x - this.padding;
@@ -67,9 +68,9 @@
         //bubble arrow
         if(percent == 1){
             this.context.beginPath();
-            this.context.moveTo(this.x+this.padding*3, rect.getBottom()-2);//-2 for iOs rendering issues
-            this.context.lineTo(this.x+this.padding*3, this.getBottom());
-            this.context.lineTo(this.x+this.padding*4 + Math.random()*(2*this.padding),rect.getBottom()-2);
+            this.context.moveTo(this.triangleX, rect.getBottom()-2);//-2 for iOs rendering issues
+            this.context.lineTo(this.triangleX, this.getBottom());
+            this.context.lineTo(this.triangleX+this.padding + Math.random()*(2*this.padding),rect.getBottom()-2);
             this.context.closePath();
             this.context.fill();
         }

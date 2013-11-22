@@ -113,6 +113,7 @@
         this.shirtFillStyle = shirtColor.getCanvasColorString() ;
         this.pantsFillStyle = BCHWColor.BCHWColorsLib.getNextColorString(shirtColor);
         this.name = "mom";
+        this.twitterHandle = "B_C_H_W";
     };
 
     //subclass extends superclass
@@ -299,6 +300,7 @@
         this.shirtFillStyle = shirtColor.getCanvasColorString() ;
         this.pantsFillStyle = BCHWColor.BCHWColorsLib.getNextColorString(shirtColor);
         this.name = "girl";
+        this.twitterHandle = "bchw_girl";
     };
 
     //subclass extends superclass
@@ -411,6 +413,7 @@
         this.shirtFillStyle = shirtColor.getCanvasColorString() ;
         this.pantsFillStyle = BCHWColor.BCHWColorsLib.getNextColorString(shirtColor);
         this.name = "boy";
+        this.twitterHandle = "bchw_son";
     };
 
     //subclass extends superclass
@@ -524,6 +527,7 @@
         this.shirtFillStyle = shirtColor.getCanvasColorString() ;
         this.couchFillStyle = BCHWColor.BCHWColorsLib.getNextColorString(shirtColor);
         this.name = "dad";
+        this.twitterHandle="bchw_dad";
     };
 
     //subclass extends superclass
