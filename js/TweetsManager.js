@@ -11,7 +11,7 @@
     }
 
     TweetsManager.prototype.loadTweets = function(callBack){
-        console.log("TweetsManagerloadTweets()");
+        //console.log("TweetsManagerloadTweets()");
         this.request = null;
         this.request = new XMLHttpRequest();
         var _this = this;
@@ -31,7 +31,7 @@
         if ( this.request.readyState == 4 && this.request.status == 200 ){
             //console.log(this.request.responseText);
             this.tweets = eval ( this.request.responseText  );
-            console.log(this.tweets);
+            //console.log(this.tweets);
             this.matchTweetsToCharacters();
             this.request.onreadystatechange = null;
             if(this.tweetsLoadedCallBack){
@@ -81,10 +81,14 @@
         if(!this.tweets){
             return null;
         }
-        var character = this.characters[Math.floor(Math.random()*this.characters.length)];
-        character.tweetIndex++;
-        character.tweetIndex %= character.tweets.length;
-        return character;
+        this.currentTweeter = this.characters[Math.floor(Math.random()*this.characters.length)];
+        this.currentTweeter.tweetIndex++;
+        this.currentTweeter.tweetIndex %= this.currentTweeter.tweets.length;
+        return this.currentTweeter;
+    }
+
+    TweetsManager.prototype.getCurrentTweeter = function(){
+        return this.currentTweeter;
     }
 
     window.TweetsManager = TweetsManager;

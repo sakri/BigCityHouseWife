@@ -138,6 +138,7 @@
     }
 
     BCHWMain.prototype.showNextTweet = function(){
+        this.context.clearRect(0,0,this.canvas.width,this.mom.y-this.lineThickness);
         this.speechBubbleContainer.style.opacity = 0;
         var character = this.tweetsManager.getNextTweeter();
         var tweet = this.tweetsManager.processTweetLinks(character.tweets[character.tweetIndex].text);
@@ -167,7 +168,6 @@
                 this.speechBubbleContainer.clientHeight+this.bubbleArrowHeight);
         }
 
-
         switch(character){
             case this.dad:
                 triangleX = this.dad.x + this.dad.width*.25;
@@ -185,6 +185,10 @@
         this.renderCharacters();
         var scope = this;
         this.speechBubble.render(this.bubbleBounds, triangleX, this.lineThickness, function(){scope.speechBubbleCompleteHandler()} );
+    }
+
+    BCHWMain.prototype.getCurrentTweeterName = function(){
+        return this.tweetsManager.getCurrentTweeter().name;
     }
 
     BCHWMain.prototype.speechBubbleCompleteHandler = function(){

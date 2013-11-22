@@ -21,11 +21,11 @@
 
     BCHWSpeechBubble.ANIMATE_INTERVAL = 20;//
 
+    //FOR BUG REASONS AND LAZYNESS, THE SPACE CONTAINING THIS BUBBLE IS CLEARED BY OWNER CLASS
     BCHWSpeechBubble.prototype.render = function(bounds, triangleX, lineThickness, completeCallback){
         //console.log("BCHWSpeechBubble.render()", bounds.toString());
         this.triangleX = triangleX;
         this.completeCallback = completeCallback ? completeCallback : null;
-        this.clear();//use previous dimensions
         this.x = bounds.x - this.padding;
         this.y = bounds.y - this.padding;
         this.width = bounds.width + this.padding*2;
@@ -42,7 +42,6 @@
     };
 
     BCHWSpeechBubble.prototype.renderBubble = function(percent){
-        this.clear();//use previous dimensions
         //bubble
         this.context.fillStyle = "#FFFFFF";
         this.context.lineWidth = 0;

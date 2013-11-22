@@ -578,6 +578,11 @@
         this.context.closePath();
         this.context.fill();
         this.context.stroke();
+
+        var shoeRect = new BCHWGeom.RoundedRectangle(this.bodyRect.x, this.bodyRect.getBottom()-this.bodyRect.height*.1 ,
+                                                       this.bodyRect.width/2, this.bodyRect.height*.1, 4 );
+        this.context.fillStyle = BCHWColor.BCHWColorsLib.WHITE.getCanvasColorString();
+        this.renderRoundedRect(shoeRect, false, true);
     }
 
     BCHWDad.prototype.renderHead = function(){
