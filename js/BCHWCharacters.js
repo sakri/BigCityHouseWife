@@ -558,8 +558,19 @@
     }
 
     BCHWDad.prototype.renderBody = function(){
+
+        //laptop
+        this.context.fillStyle = BCHWColor.BCHWColorsLib.LIGHT_GRAY.getCanvasColorString();
+        this.laptopRect = new BCHWGeom.RoundedRectangle(0,0, this.width *.25, this.width *.05, 2);
+        this.context.save();
+        this.context.translate(this.x, this.getCenterY());
+        this.context.rotate(Math.PI *.2);
+        this.renderRoundedRect(this.laptopRect);
+        this.context.restore();
+
         //trunk
         this.context.fillStyle = this.shirtFillStyle ;
+
         this.bodyRect = new BCHWGeom.Rectangle(  this.x + this.width *.25, this.couchRect.y,
                                                   this.width *.6 , this.couchRect.height);
         var radius = 6;//TODO must be dynamic
@@ -579,10 +590,22 @@
         this.context.fill();
         this.context.stroke();
 
+        //shoe
         var shoeRect = new BCHWGeom.RoundedRectangle(this.bodyRect.x, this.bodyRect.getBottom()-this.bodyRect.height*.1 ,
                                                        this.bodyRect.width/2, this.bodyRect.height*.1, 4 );
         this.context.fillStyle = BCHWColor.BCHWColorsLib.WHITE.getCanvasColorString();
         this.renderRoundedRect(shoeRect, false, true);
+
+        //arm
+        this.context.beginPath();
+        var shoulderX = this.bodyRect.getCenterX();
+        var shoulderY = this.bodyRect.y + (this.bodyRect.height *.25);
+        var handX = this.x+this.bodyRect.width *.1 + Math.random()*(this.bodyRect.width *.2);
+        var handY = this.bodyRect.y+Math.random()*(this.bodyRect.height *.25);
+        this.context.moveTo(shoulderX,shoulderY);
+        this.context.lineTo(handX+(shoulderX-handX)/2 , shoulderY + Math.random()*(this.bodyRect.width *.2));
+        this.context.lineTo(handX,handY);
+        this.context.stroke();
     }
 
     BCHWDad.prototype.renderHead = function(){
