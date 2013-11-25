@@ -17,6 +17,7 @@
 
 
     <script type="text/javascript" src="js/TweetsManager.js" ></script>
+    <script type="text/javascript" src="js/BlogPostsManager.js" ></script>
     <script type="text/javascript" src="js/BCHWMathUtil.js" ></script>
     <script type="text/javascript" src="js/BCHWGeom.js" ></script>
     <script type="text/javascript" src="js/BCHWArrayUtil.js" ></script>
@@ -30,6 +31,7 @@
 
 
     <!--<script type="text/javascript" src="js/TweetsManager.min.js" ></script>
+    <script type="text/javascript" src="js/BlogPostsManager.min.js" ></script>
     <script type="text/javascript" src="js/BCHWMathUtil.min.js" ></script>
     <script type="text/javascript" src="js/BCHWGeom.min.js" ></script>
     <script type="text/javascript" src="js/BCHWArrayUtil.min.js" ></script>
@@ -40,6 +42,8 @@
     <script type="text/javascript" src="js/BCHWCharacters.min.js" ></script>
     <script type="text/javascript" src="js/BCHWSpeechBubble.min.js" ></script>
     <script type="text/javascript" src="js/BCHWMain.min.js" ></script>-->
+
+    <!--<script type="text/javascript" src="http://www.bigcityhousewife.net/js/bigCityHouseWife.js" ></script>-->
 
 
     <!--<script type="text/javascript" src="js/BCHWTests.js" ></script>-->
@@ -61,6 +65,13 @@
         function tweetLinkClickHandler(url){
             if(location.hostname && location.hostname.toLowerCase().indexOf("bigcityhousewife")>-1){
                 ga("send", "event", "tweetClick", this.main.getCurrentTweeterName());
+            }
+            window.open(url,'_blank')
+        }
+
+        function blogPostClickHandler(url){
+            if(location.hostname && location.hostname.toLowerCase().indexOf("bigcityhousewife")>-1){
+                ga("send", "event", "blogPostClick", url);
             }
             window.open(url,'_blank')
         }

@@ -12,10 +12,11 @@
 
     //static variables
     BCHWMain.REFRESH_AFTER_RESIZE_INTERVAL = 300;//wait this long to rerender graphics after last resize
-    BCHWMain.TWEET_INTERVAL = 5000;//characters display a tweet at this interval
+    BCHWMain.SPEECH_BUBBLE_INTERVAL = 5000;//characters display a tweet at this interval
     BCHWMain.MOUSEOVER_TWEET_INTERVAL = 8000;//tweet stops for this amount of time when hovering over with mouse
 
     BCHWMain.prototype.init = function(canvasContainer, speechBubbleContainer){
+
         //console.log("BCHWMain.init()");
         this.canvas = document.createElement('canvas');
         this.canvasContainer = canvasContainer;
@@ -28,11 +29,18 @@
         this.boy = new BCHWBoy(this.canvas);
         this.dad = new BCHWDad(this.canvas);
         this.render();
+
         this.tweetsManager = new TweetsManager([this.mom,this.girl,this.boy,this.dad]);
         var scope = this;
         this.tweetsManager.loadTweets(function(){scope.tweetsLoadedHandler()});
         this.speechBubbleContainer = speechBubbleContainer;
         this.speechBubble = new BCHWSpeechBubble(this.canvas, this.bubbleArrowHeight);
+
+        this.blogPostsManager = new BlogPostsManager();
+        var scope = this;
+        this.blogPostsManager.load(function(){scope.blogPostsLoadedHandler()});
+
+        this.hasSpeechBubbleContent = false;
     };
 
 	BCHWMain.prototype.clearContext = function(){
@@ -43,7 +51,7 @@
 		this.clearContext();
         this.speechBubbleContainer.style.opacity = 0;
 		clearTimeout (this.resizeTimeoutId);
-		clearTimeout (this.twitterTalkTimeout);
+		clearTimeout (this.speechBubbleTimeout);
         this.speechBubble.stop();
 		var scope = this;
 		this.resizeTimeoutId = setTimeout(function(){
@@ -53,7 +61,7 @@
 
     BCHWMain.prototype.reset = function(){
         this.render();
-        this.setTwitterTalkTimeout();
+        this.setSpeechBubbleTimeout();
     }    
 	
 	BCHWMain.prototype.render = function(){
@@ -124,12 +132,6 @@
         this.boy.render(this.boyBounds, this.lineThickness);
 	};
 
-
-    BCHWMain.prototype.tweetsLoadedHandler = function(){
-        //console.log("BCHWMain.tweetsLoadedHandler()");
-        this.showNextTweet();
-    }
-
     BCHWMain.prototype.renderCharacters = function(){
         this.mom.render(this.momBounds,this.lineThickness);
         this.girl.render(this.girlBounds, this.lineThickness);
@@ -137,12 +139,41 @@
         this.dad.render(this.dadBounds, this.lineThickness);
     }
 
+    BCHWMain.prototype.showNextSpeechBubble = function(){
+       if(this.blogPostsManager.rssLoaded() && this.tweetsManager.tweetsLoaded()){
+           if(Math.random()>.7){
+               this.showNextBlogPost();
+           }else{
+               this.showNextTweet();
+           }
+           return;
+       }
+       if(this.blogPostsManager.rssLoaded()){
+           this.showNextBlogPost();
+       }
+        if(this.tweetsManager.tweetsLoaded()){
+            this.showNextTweet();
+       }
+    }
+
     BCHWMain.prototype.showNextTweet = function(){
-        this.context.clearRect(0,0,this.canvas.width,this.mom.y-this.lineThickness);
-        this.speechBubbleContainer.style.opacity = 0;
         var character = this.tweetsManager.getNextTweeter();
         var tweet = this.tweetsManager.processTweetLinks(character.tweets[character.tweetIndex].text);
-        this.speechBubbleContainer.innerHTML = "<p>"+tweet+"</p>";
+        this.displayInSpeechBubble(character, "<p>"+tweet+"</p>");
+    }
+
+    BCHWMain.prototype.showNextBlogPost = function(){
+        var post = this.blogPostsManager.getNextBlogPost();
+        var content =  "<p class='blogPostBubbleText'><img src='"+post.img+"' />";
+        content += "<a href='javascript: void(0)' onclick='blogPostClickHandler(\""+post.link+"\")' >"+post.title+"</a></p>";
+        this.displayInSpeechBubble(this.mom, content);
+    }
+
+    BCHWMain.prototype.displayInSpeechBubble = function(character, text){
+        this.context.clearRect(0,0,this.canvas.width,this.mom.y-this.lineThickness);
+        this.speechBubbleContainer.style.opacity = 0;
+
+        this.speechBubbleContainer.innerHTML = text;
         this.speechBubbleContainer.style.maxWidth = (this.logoBounds.width+this.momBounds.width/2)+"px";
 
         var x, triangleX;
@@ -187,26 +218,42 @@
         this.speechBubble.render(this.bubbleBounds, triangleX, this.lineThickness, function(){scope.speechBubbleCompleteHandler()} );
     }
 
+    BCHWMain.prototype.tweetsLoadedHandler = function(){
+        //console.log("BCHWMain.tweetsLoadedHandler()");
+        if(!this.hasSpeechBubbleContent){
+            this.showNextSpeechBubble();
+        }
+        this.hasSpeechBubbleContent = true;
+    }
+
     BCHWMain.prototype.getCurrentTweeterName = function(){
         return this.tweetsManager.getCurrentTweeter().name;
     }
 
     BCHWMain.prototype.speechBubbleCompleteHandler = function(){
         this.speechBubbleContainer.style.opacity = 1;
-        this.setTwitterTalkTimeout();
+        this.setSpeechBubbleTimeout();
     }
 
-    BCHWMain.prototype.setTwitterTalkTimeout = function(interval){
-        //console.log("BCHWMain.setTwitterTalkTimeout()");
+    BCHWMain.prototype.setSpeechBubbleTimeout = function(interval){
+        //console.log("BCHWMain.setSpeechBubbleTimeout()");
         var scope = this;
-        this.twitterTalkTimeout = setTimeout(function(){
-            scope.showNextTweet();
-        }, isNaN(interval) ? BCHWMain.TWEET_INTERVAL : interval );
+        this.speechBubbleTimeout = setTimeout(function(){
+            scope.showNextSpeechBubble();
+        }, isNaN(interval) ? BCHWMain.SPEECH_BUBBLE_INTERVAL : interval );
     }
 
     BCHWMain.prototype.speechBubbleContainerMouseOverHandler = function(){
-        clearTimeout (this.twitterTalkTimeout);
-        this.setTwitterTalkTimeout(BCHWMain.MOUSEOVER_TWEET_INTERVAL);
+        clearTimeout (this.speechBubbleTimeout);
+        this.setSpeechBubbleTimeout(BCHWMain.MOUSEOVER_TWEET_INTERVAL);
+    }
+
+
+    BCHWMain.prototype.blogPostsLoadedHandler = function(){
+        if(!this.hasSpeechBubbleContent){
+            this.showNextSpeechBubble();
+        }
+        this.hasSpeechBubbleContent = true;
     }
 
 	window.BCHWMain = BCHWMain;

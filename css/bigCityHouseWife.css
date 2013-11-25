@@ -41,6 +41,19 @@ html{
     color: #9d0b0e;
 }
 
+#speechBubbleContainer img{
+    margin-right: 10px;
+    height:50px;
+    width:50px;
+}
+
+.blogPostBubbleText{
+    height:50px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+
 #BCHWLinks{
     position:absolute;
     right:35px;
