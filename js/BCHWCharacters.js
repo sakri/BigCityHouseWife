@@ -142,7 +142,9 @@
     BCHWMom.prototype.renderHead = function(){
         //hair
         this.context.fillStyle = BCHWColor.BCHWColorsLib.DARK_GRAY.getCanvasColorString();
-        this.hairRect = new BCHWGeom.RoundedRectangle(this.x, this.y, this.width, this.height*.35, 6);
+        var hairHeight = this.height*.35;
+        this.cornerRadius = hairHeight/7;
+        this.hairRect = new BCHWGeom.RoundedRectangle(this.x, this.y, this.width, hairHeight, this.cornerRadius);
         this.renderRoundedRect(this.hairRect);
 
         //face
@@ -150,7 +152,7 @@
         this.faceRect = new BCHWGeom.RoundedRectangle(  this.x + this.width/4,
                                                         this.hairRect.y+this.hairRect.height/3,
                                                         this.width/2,
-                                                        this.height*.3, 8);
+                                                        this.height*.3, this.cornerRadius);
         this.renderRoundedRect(this.faceRect);
 
     }
@@ -158,20 +160,20 @@
         //trunk
         this.context.fillStyle = this.shirtFillStyle ;
         this.bodyRect = new BCHWGeom.RoundedRectangle(  0, this.faceRect.getBottom(),
-                                                        this.faceRect.width *.95 , (this.getBottom()-this.faceRect.getBottom()) *.7, 9);
+                                                        this.faceRect.width *.95 , (this.getBottom()-this.faceRect.getBottom()) *.7, this.cornerRadius+1);
         this.bodyRect.x = (this.faceRect.x+this.faceRect.width/2)-(this.bodyRect.width/2);
         this.renderRoundedRect(this.bodyRect);
 
         //pants
         this.context.fillStyle = this.pantsFillStyle;
         this.pantsRect = new BCHWGeom.RoundedRectangle( this.faceRect.x, this.bodyRect.getBottom()-this.faceRect.radius,
-                                                        this.faceRect.width, (this.getBottom()-this.bodyRect.getBottom()) *.95);
+                                                        this.faceRect.width, (this.getBottom()-this.bodyRect.getBottom()) *.95,this.cornerRadius);
         this.renderRoundedRect(this.pantsRect);
 
         //shoes
         this.context.lineWidth = 0;
         this.shoeRect = new BCHWGeom.RoundedRectangle(this.pantsRect.x, this.pantsRect.getBottom() ,
-                                                        this.pantsRect.width/2 , (this.getBottom()-this.pantsRect.getBottom()), 3);
+                                                        this.pantsRect.width/2 , (this.getBottom()-this.pantsRect.getBottom()), this.cornerRadius/2);
         this.context.fillStyle = BCHWColor.BCHWColorsLib.WHITE.getCanvasColorString();
         this.renderRoundedRect(this.shoeRect);
         this.shoeRect.x = this.pantsRect.x + this.pantsRect.width/2;
@@ -334,7 +336,7 @@
         var leftHairBall = new BCHWGeom.Rectangle(  this.hairRect.getRight()-leftWidth, this.hairRect.getBottom()-leftHeight,
                                                     leftWidth, leftHeight);
         var hairHeight = this.hairRect.height/2;
-        var hairRadius = (leftHairBall.width/2)*.6;
+        var hairRadius = leftHairBall.width/5;
 
         this.context.beginPath();
         this.context.moveTo(this.hairRect.x,this.hairRect.y+hairRadius);
@@ -360,10 +362,12 @@
         //face
         this.context.fillStyle = BCHWColor.BCHWColorsLib.WHITE.getCanvasColorString();
         this.context.lineWidth = 0;
+        var faceHeight = (this.height-this.hairRect.height) *.4;
+        this.cornerRadius = faceHeight/6;
         this.faceRect = new BCHWGeom.RoundedRectangle(  this.x + this.width *.15,
                                                         this.hairRect.getBottom(),
                                                         this.width *.7,
-                                                        (this.height-this.hairRect.height) *.4, 5);
+                                                        faceHeight, this.cornerRadius);
         this.renderRoundedRect(this.faceRect);
         this.context.lineWidth = this.lineThickness;
 
@@ -372,14 +376,14 @@
         //trunk
         this.context.fillStyle = this.shirtFillStyle ;
         this.bodyRect = new BCHWGeom.RoundedRectangle(  0, this.faceRect.getBottom(),
-            this.faceRect.width *.95 , (this.getBottom()-this.faceRect.getBottom()) *.7, 4);
+            this.faceRect.width *.95 , (this.getBottom()-this.faceRect.getBottom()) *.7, this.cornerRadius *.8);
         this.bodyRect.x = (this.faceRect.x+this.faceRect.width/2)-(this.bodyRect.width/2);
         this.renderRoundedRect(this.bodyRect);
 
         //pants
         this.context.fillStyle = this.pantsFillStyle;
         this.pantsRect = new BCHWGeom.RoundedRectangle( this.faceRect.x, this.bodyRect.getBottom(),
-            this.faceRect.width, this.getBottom()-this.bodyRect.getBottom(), 3);
+            this.faceRect.width, this.getBottom()-this.bodyRect.getBottom(), this.cornerRadius *.8);
         this.renderRoundedRect(this.pantsRect);
 
         this.context.moveTo(this.pantsRect.getCenterX(), this.getBottom()-this.lineThickness);
@@ -442,7 +446,8 @@
         this.context.fillStyle = BCHWColor.BCHWColorsLib.LIGHT_GRAY.getCanvasColorString();
         this.hairRect = new BCHWGeom.Rectangle(this.x, this.y, this.width, this.height/5);
 
-        var hairRoundedRect = new BCHWGeom.RoundedRectangle(this.hairRect.x, this.hairRect.getCenterY(), this.hairRect.width, this.hairRect.height/2);
+        var hairHeight = this.hairRect.height/2;
+        var hairRoundedRect = new BCHWGeom.RoundedRectangle(this.hairRect.x, this.hairRect.getCenterY(), this.hairRect.width, hairHeight, hairHeight/3);
         this.renderRoundedRect(hairRoundedRect);
 
         var ballRadius = hairRoundedRect.height/2;
@@ -475,10 +480,12 @@
         //this.context.closePath();
         //face
         this.context.lineWidth = 0;
+        var faceHeight = (this.height-this.hairRect.height) *.4;
+        this.cornerRadius = faceHeight/6;
         this.faceRect = new BCHWGeom.RoundedRectangle(  this.x + this.width *.05,
             this.hairRect.getBottom(),
             this.width *.9,
-            (this.height-this.hairRect.height) *.4, 5);
+            faceHeight, this.cornerRadius);
         this.renderRoundedRect(this.faceRect);
         this.context.lineWidth = this.lineThickness;
     }
@@ -486,14 +493,14 @@
         //trunk
         this.context.fillStyle = this.shirtFillStyle ;
         this.bodyRect = new BCHWGeom.RoundedRectangle(  0, this.faceRect.getBottom(),
-            this.faceRect.width *.95 , (this.getBottom()-this.faceRect.getBottom()) *.7, 4);
+            this.faceRect.width *.95 , (this.getBottom()-this.faceRect.getBottom()) *.7, this.cornerRadius);
         this.bodyRect.x = (this.faceRect.x+this.faceRect.width/2)-(this.bodyRect.width/2);
         this.renderRoundedRect(this.bodyRect);
 
         //pants
         this.context.fillStyle = this.pantsFillStyle;
         this.pantsRect = new BCHWGeom.RoundedRectangle( this.faceRect.x, this.bodyRect.getBottom(),
-            this.faceRect.width, this.getBottom()-this.bodyRect.getBottom(), 3);
+            this.faceRect.width, this.getBottom()-this.bodyRect.getBottom(), this.cornerRadius *.8);
         this.renderRoundedRect(this.pantsRect);
 
         this.context.moveTo(this.pantsRect.getCenterX(), this.getBottom()-this.lineThickness);
@@ -553,7 +560,8 @@
 
     BCHWDad.prototype.renderCouch = function(){
         this.context.fillStyle = this.couchFillStyle
-        this.couchRect = new BCHWGeom.RoundedRectangle(this.x+this.width *.4, this.y+this.height *.4, this.width *.6, this.height*.6, 8);
+        var couchHeight = this.height*.6;
+        this.couchRect = new BCHWGeom.RoundedRectangle(this.x+this.width *.4, this.y+this.height *.4, this.width *.6, couchHeight, couchHeight/18);
         this.renderRoundedRect(this.couchRect);
     }
 
@@ -573,7 +581,7 @@
 
         this.bodyRect = new BCHWGeom.Rectangle(  this.x + this.width *.25, this.couchRect.y,
                                                   this.width *.6 , this.couchRect.height);
-        var radius = 6;//TODO must be dynamic
+        var radius = this.couchRect.height/20;
         this.context.beginPath();
         this.context.moveTo(this.bodyRect.x, this.bodyRect.y+radius);
         this.context.arc(this.bodyRect.x+radius, this.bodyRect.y+radius, radius, Math.PI, Math.PI+BCHWMathUtil.HALF_PI);
@@ -591,8 +599,9 @@
         this.context.stroke();
 
         //shoe
+        var shoeHeight = this.bodyRect.height*.1;
         var shoeRect = new BCHWGeom.RoundedRectangle(this.bodyRect.x, this.bodyRect.getBottom()-this.bodyRect.height*.1 ,
-                                                       this.bodyRect.width/2, this.bodyRect.height*.1, 4 );
+                                                       this.bodyRect.width/2, shoeHeight, shoeHeight/3 );
         this.context.fillStyle = BCHWColor.BCHWColorsLib.WHITE.getCanvasColorString();
         this.renderRoundedRect(shoeRect, false, true);
 
@@ -611,9 +620,10 @@
     BCHWDad.prototype.renderHead = function(){
         //face
         this.context.fillStyle = BCHWColor.BCHWColorsLib.WHITE.getCanvasColorString();
+        var faceHeight = this.bodyRect.y-this.y;
         this.faceRect = new BCHWGeom.RoundedRectangle(  this.bodyRect.x, this.y,
                                                         this.bodyRect.width,
-                                                        this.bodyRect.y-this.y, 8);
+                                                        faceHeight, faceHeight/7);
         this.renderRoundedRect(this.faceRect, false, true);
 
         //hair
@@ -653,7 +663,7 @@
         this.renderRect(renderRect);
 
         this.context.strokeStyle = BCHWColor.BCHWColorsLib.BLACK.getCanvasColorString();
-        this.context.lineWidth = 2;
+        this.context.lineWidth = Math.round(this.lineThickness/2);
 
         //eye brow
         this.context.beginPath();

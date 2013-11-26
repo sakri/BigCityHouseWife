@@ -12,12 +12,10 @@
 
     //static variables
     BCHWMain.REFRESH_AFTER_RESIZE_INTERVAL = 300;//wait this long to rerender graphics after last resize
-    BCHWMain.SPEECH_BUBBLE_INTERVAL = 5000;//characters display a tweet at this interval
-    BCHWMain.MOUSEOVER_TWEET_INTERVAL = 8000;//tweet stops for this amount of time when hovering over with mouse
+    BCHWMain.SPEECH_PAUSE_INTERVAL = 400;//wait this long between speech bubbles
+    BCHWMain.MOUSEOVER_TWEET_INTERVAL = 5000;//tweet stops for this amount of time when hovering over with mouse
 
     BCHWMain.prototype.init = function(canvasContainer, speechBubbleContainer){
-
-        //console.log("BCHWMain.init()");
         this.canvas = document.createElement('canvas');
         this.canvasContainer = canvasContainer;
         this.context = this.canvas.getContext("2d");
@@ -30,11 +28,12 @@
         this.dad = new BCHWDad(this.canvas);
         this.render();
 
+        this.speechBubbleContainer = speechBubbleContainer;
+        this.speechBubble = new BCHWSpeechBubble(this.canvas, this.bubbleArrowHeight);
+
         this.tweetsManager = new TweetsManager([this.mom,this.girl,this.boy,this.dad]);
         var scope = this;
         this.tweetsManager.loadTweets(function(){scope.tweetsLoadedHandler()});
-        this.speechBubbleContainer = speechBubbleContainer;
-        this.speechBubble = new BCHWSpeechBubble(this.canvas, this.bubbleArrowHeight);
 
         this.blogPostsManager = new BlogPostsManager();
         var scope = this;
@@ -42,6 +41,8 @@
 
         this.hasSpeechBubbleContent = false;
     };
+
+    //=================::GENERAL RENDERING::==========================
 
 	BCHWMain.prototype.clearContext = function(){
 		this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
@@ -51,7 +52,7 @@
 		this.clearContext();
         this.speechBubbleContainer.style.opacity = 0;
 		clearTimeout (this.resizeTimeoutId);
-		clearTimeout (this.speechBubbleTimeout);
+		clearTimeout (this.showNextSpeechBubbleTimeoutId);
         this.speechBubble.stop();
 		var scope = this;
 		this.resizeTimeoutId = setTimeout(function(){
@@ -61,7 +62,7 @@
 
     BCHWMain.prototype.reset = function(){
         this.render();
-        this.setSpeechBubbleTimeout();
+        this.showNextSpeechBubble();//risky... should let logo complete first?
     }    
 	
 	BCHWMain.prototype.render = function(){
@@ -80,6 +81,9 @@
             this.lineThickness = 2;
             boundsX = this.canvas.width*this.margin;
             boundsY = this.canvas.height*this.margin;
+        }
+        if(this.canvasContainer.clientWidth < 450){
+            this.lineThickness = 1;
         }
 
         var canvasBounds = new BCHWGeom.Rectangle(boundsX, boundsY, this.canvas.width-boundsX*2, this.canvas.height-boundsY*2);
@@ -139,21 +143,27 @@
         this.dad.render(this.dadBounds, this.lineThickness);
     }
 
+
+    //=================::SPEECH BUBBLE RELATED::==========================
+
     BCHWMain.prototype.showNextSpeechBubble = function(){
-       if(this.blogPostsManager.rssLoaded() && this.tweetsManager.tweetsLoaded()){
-           if(Math.random()>.7){
-               this.showNextBlogPost();
-           }else{
-               this.showNextTweet();
-           }
-           return;
-       }
-       if(this.blogPostsManager.rssLoaded()){
-           this.showNextBlogPost();
-       }
+        //console.log("BCHWMain.showNextSpeechBubble()");
+        this.showNextSpeechBubbleTimeoutId = -1;
+        if(this.blogPostsManager.rssLoaded() && this.tweetsManager.tweetsLoaded()){
+            if(Math.random()>.7){
+                this.showNextBlogPost();
+            }else{
+                this.showNextTweet();
+            }
+            return;
+        }
+        if(this.blogPostsManager.rssLoaded()){
+            this.showNextBlogPost();
+        }
         if(this.tweetsManager.tweetsLoaded()){
             this.showNextTweet();
-       }
+        }
+        //set some form of a timeout?
     }
 
     BCHWMain.prototype.showNextTweet = function(){
@@ -164,11 +174,13 @@
 
     BCHWMain.prototype.showNextBlogPost = function(){
         var post = this.blogPostsManager.getNextBlogPost();
+        //http://jsfiddle.net/L5r5W/2/  <= example of vertically centered text, why this doesn't work here, I cannot explain
         var content =  "<p class='blogPostBubbleText'><img src='"+post.img+"' />";
         content += "<a href='javascript: void(0)' onclick='blogPostClickHandler(\""+post.link+"\")' >"+post.title+"</a></p>";
         this.displayInSpeechBubble(this.mom, content);
     }
 
+    //This is some ghetto spaghetti, clean up as soon as, well, it becomes necessary ;)
     BCHWMain.prototype.displayInSpeechBubble = function(character, text){
         this.context.clearRect(0,0,this.canvas.width,this.mom.y-this.lineThickness);
         this.speechBubbleContainer.style.opacity = 0;
@@ -215,7 +227,10 @@
         }
         this.renderCharacters();
         var scope = this;
-        this.speechBubble.render(this.bubbleBounds, triangleX, this.lineThickness, function(){scope.speechBubbleCompleteHandler()} );
+        this.speechBubble.showBubble(   this.bubbleBounds, triangleX, this.lineThickness,
+                                        function(){scope.showBubbleCompleteHandler()},
+                                        function(){scope.startHideBubbleCompleteHandler()},
+                                        function(){scope.hideBubbleCompleteHandler()});
     }
 
     BCHWMain.prototype.tweetsLoadedHandler = function(){
@@ -230,30 +245,36 @@
         return this.tweetsManager.getCurrentTweeter().name;
     }
 
-    BCHWMain.prototype.speechBubbleCompleteHandler = function(){
-        this.speechBubbleContainer.style.opacity = 1;
-        this.setSpeechBubbleTimeout();
-    }
-
-    BCHWMain.prototype.setSpeechBubbleTimeout = function(interval){
-        //console.log("BCHWMain.setSpeechBubbleTimeout()");
-        var scope = this;
-        this.speechBubbleTimeout = setTimeout(function(){
-            scope.showNextSpeechBubble();
-        }, isNaN(interval) ? BCHWMain.SPEECH_BUBBLE_INTERVAL : interval );
-    }
-
-    BCHWMain.prototype.speechBubbleContainerMouseOverHandler = function(){
-        clearTimeout (this.speechBubbleTimeout);
-        this.setSpeechBubbleTimeout(BCHWMain.MOUSEOVER_TWEET_INTERVAL);
-    }
-
-
     BCHWMain.prototype.blogPostsLoadedHandler = function(){
         if(!this.hasSpeechBubbleContent){
             this.showNextSpeechBubble();
         }
         this.hasSpeechBubbleContent = true;
+    }
+
+
+    BCHWMain.prototype.showBubbleCompleteHandler = function(){
+        //console.log("BCHWMain.showBubbleCompleteHandler()");
+        this.speechBubbleContainer.style.opacity = 1;
+    }
+
+    BCHWMain.prototype.startHideBubbleCompleteHandler = function(){
+        //console.log("BCHWMain.startHideBubbleCompleteHandler()");
+        this.speechBubbleContainer.style.opacity = 0;
+    }
+
+    BCHWMain.prototype.hideBubbleCompleteHandler = function(){
+        //console.log("BCHWMain.hideBubbleCompleteHandler()");
+        var scope = this;
+        this.showNextSpeechBubbleTimeoutId = setTimeout(function(){scope.showNextSpeechBubble();}, BCHWMain.SPEECH_PAUSE_INTERVAL);
+    }
+
+    BCHWMain.prototype.speechBubbleContainerMouseOverHandler = function(){
+        //needs to make a call to speechBubble
+        /*
+        clearTimeout (this.speechBubbleTimeout);
+        this.setSpeechBubbleTimeout(BCHWMain.MOUSEOVER_TWEET_INTERVAL);
+        */
     }
 
 	window.BCHWMain = BCHWMain;

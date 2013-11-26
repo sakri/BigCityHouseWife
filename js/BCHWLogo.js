@@ -45,8 +45,10 @@
         this.zIndeces = BCHWArrayUtil.createSequentialNumericArray(this.allCharacters.length);
         this.zIndeces = BCHWArrayUtil.shuffle(this.zIndeces);
         this.currentRenderIndex = 0;
+        var roundedRectRadius = this.row1.height / 12;
         for(var i=0; i<this.allCharacters.length; i++){
             this.allCharacters[i].thickness = lineThickness;
+            this.allCharacters[i].roundedRect.radius = roundedRectRadius;
         }
         this.renderNextCharacter();
     };
@@ -61,7 +63,7 @@
             return;
         }
         var fontCharacter = this.allCharacters[this.zIndeces[this.currentRenderIndex]];
-        fontCharacter.addRandomness(2,.01);
+        fontCharacter.addRandomness(this.row1.height/40,.01);
         fontCharacter.renderToContext(this.context);
 
         var scope = this;

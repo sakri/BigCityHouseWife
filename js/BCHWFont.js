@@ -16,7 +16,7 @@
 		this.renderFunction(context,this);
 	};
 	
-	BCHWFontCharacter.prototype.addRandomness=function(maxPos,maxScale){
+	BCHWFontCharacter.prototype.addRandomness = function(maxPos,maxScale){
 		this.roundedRect.x+=BCHWMathUtil.getRandomNumberInRange(-maxPos,maxPos);
 		this.roundedRect.y+=BCHWMathUtil.getRandomNumberInRange(-maxPos,maxPos);
 		this.roundedRect.scaleX(1+BCHWMathUtil.getRandomNumberInRange(-maxScale,maxScale));
