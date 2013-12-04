@@ -1,0 +1,81 @@
+<!Doctype html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+
+    <meta name="description" content="Big City House Wife memory game" />
+    <meta name="keywords" content="Game, Memory, Cartoon, Big City House Wife, humor, comic, family, kids, funny" />
+    <meta name="author" content="Melissa Beltgens, Sakri Rosenstrom" />
+    <link rel="shortcut icon" href="assets/favicon.ico">
+
+    <title>Big City House Wife : Test</title>
+
+    <!-- all source code by sakri.net , check it out on github : https://github.com/sakri/BigCityHouseWife -->
+
+    <link rel="stylesheet" type="text/css" href="css/bigCityHouseWife.min.css">
+
+
+    <script type="text/javascript" src="js/BCHWMathUtil.js" ></script>
+    <script type="text/javascript" src="js/BCHWGeom.js" ></script>
+    <script type="text/javascript" src="js/UnitAnimator.js" ></script>
+    <script type="text/javascript" src="js/BCHWArrayUtil.js" ></script>
+    <script type="text/javascript" src="js/BCHWImageStore.js" ></script>
+    <script type="text/javascript" src="js/BCHWColor.js" ></script>
+    <script type="text/javascript" src="js/TransformRectangle.js" ></script>
+    <script type="text/javascript" src="js/games/MemoryGameCardFlip.js" ></script>
+    <script type="text/javascript" src="js/BCHWLayout.js" ></script>
+    <script type="text/javascript" src="js/BCHWFont.js" ></script>
+    <script type="text/javascript" src="js/games/MemoryGameLogo.js" ></script>
+
+    <script type="text/javascript" src="js/games/BCHWMemoryGame.js" ></script>
+
+    <!--<script type="text/javascript" src="http://www.bigcityhousewife.net/js/BCHWMemoryGame.js" ></script>-->
+
+    <script type="text/javascript">
+
+        var canvasContainer, canvas, context;
+
+        var imageStore = new BCHWImageStore();
+        var flipper = new MemoryGameCardFlip(6000,500);
+
+        function init(){
+            //console.log(JSON.parse ? "I can has json" :  "no Json");
+            main = new BCHWMemoryGame();
+            canvasContainer = document.getElementById("homeCanvasContainer");
+            canvas = document.createElement('canvas');
+            context = this.canvas.getContext("2d");
+            canvasContainer.appendChild(this.canvas);
+
+            imageStore.loadImages(["assets/BCHW_XMAS_FB_PROFILE.jpg"], imageLoaded);
+
+        }
+
+        function imageLoaded(){
+            canvas.width = canvasContainer.clientWidth;
+            canvas.height = canvasContainer.clientHeight;
+            var canvasRect = new BCHWGeom.Rectangle(0,0,canvasContainer.clientWidth,canvasContainer.clientHeight);
+            var flipRect = new BCHWGeom.Rectangle(0,0,500,500);
+            BCHWGeom.RectangleUtil.horizontalAlignMiddle(canvasRect, flipRect);
+            BCHWGeom.RectangleUtil.verticalAlignMiddle(canvasRect, flipRect);
+
+            flipper.flip(flipRect, context, imageStore.images[0], imageStore.images[0], undefined, undefined, true );
+        }
+
+        var readyStateCheckInterval = setInterval( function() {
+            if (document.readyState === "complete") {
+                init();
+                clearInterval(readyStateCheckInterval);
+            }
+        }, 10);
+
+    </script>
+
+</head>
+<body onresize="resizeHandler()"  >
+
+    <div id="homeCanvasContainer"></div>
+
+</body>
+</html>

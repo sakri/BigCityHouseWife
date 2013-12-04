@@ -87,7 +87,9 @@
 			case "g":
 			case "h":
 			case "i":
+			case "m":
 			case "o":
+			case "r":
 			case "s":
 			case "t":
 			case "u":
@@ -127,9 +129,15 @@
 			case "i":
 				percent = .5;
 				break;
+            case "m":
+                percent = 1.2;
+                break;
 			case "o":
 				percent = .9;
 				break;
+            case "r":
+                percent = 1;
+                break;
 			case "s":
 				percent = .8;
 				break;
@@ -288,6 +296,23 @@
 	BCHWFontCharacterRenderer.renderI = function(context,character){
 		BCHWFontCharacterRenderer.renderRoundedRectToContext(context,character);
 	};
+
+    BCHWFontCharacterRenderer.renderM = function(context,character){
+        BCHWFontCharacterRenderer.renderRoundedRectToContext(context,character);
+        context.beginPath();
+        context.lineWidth=character.thickness;
+        context.strokeStyle=character.lineColor.getCanvasColorString();
+
+        var thirdHeight=character.roundedRect.height/3;
+        var thirdWidth=character.roundedRect.width/3;
+        context.moveTo(character.roundedRect.x+thirdWidth,character.roundedRect.getBottom());
+        context.lineTo(character.roundedRect.x+thirdWidth,character.roundedRect.getBottom()-thirdHeight);
+
+        context.moveTo(character.roundedRect.x+thirdWidth*2,character.roundedRect.getBottom());
+        context.lineTo(character.roundedRect.x+thirdWidth*2,character.roundedRect.getBottom()-thirdHeight);
+
+        context.stroke();
+    };
 	
 	BCHWFontCharacterRenderer.renderO = function(context,character){
 		BCHWFontCharacterRenderer.renderRoundedRectToContext(context,character);
@@ -303,6 +328,28 @@
 
 		context.stroke(); 
 	};
+
+    BCHWFontCharacterRenderer.renderR = function(context,character){
+        BCHWFontCharacterRenderer.renderRoundedRectToContext(context,character);
+        context.beginPath();
+        context.lineWidth = character.thickness;
+        context.strokeStyle = character.lineColor.getCanvasColorString();
+
+        var right = character.roundedRect.x+character.roundedRect.width;
+        var yMiddle = character.roundedRect.y+character.roundedRect.height/2;
+        context.moveTo(right, yMiddle);
+        context.lineTo(right-character.roundedRect.width/4,yMiddle);
+
+        var fourthHeight=character.roundedRect.height/4;
+        context.moveTo(character.roundedRect.x+character.roundedRect.width/2,character.roundedRect.y+fourthHeight);
+        context.lineTo(character.roundedRect.x+character.roundedRect.width/2+character.roundedRect.width/4,character.roundedRect.y+fourthHeight);
+
+        var x = character.roundedRect.x+character.roundedRect.width/2;
+        context.moveTo(x, character.roundedRect.getBottom()-fourthHeight);
+        context.lineTo(x, character.roundedRect.getBottom());
+
+        context.stroke();
+    };
 
 	BCHWFontCharacterRenderer.renderS = function(context,character){
 		BCHWFontCharacterRenderer.renderRoundedRectToContext(context,character);

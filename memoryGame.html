@@ -5,36 +5,33 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
 
-    <meta name="description" content="Trials and tribulations of a Big City House Wife : cartoons, comics, poems and games " />
-    <meta name="keywords" content="Cartoon, Big City House Wife, Blog, Mommy Blog, Social Commentary, humor, comic, family, kids, funny, poem, poems" />
+    <meta name="description" content="Big City House Wife memory game" />
+    <meta name="keywords" content="Game, Memory, Cartoon, Big City House Wife, humor, comic, family, kids, funny" />
     <meta name="author" content="Melissa Beltgens, Sakri Rosenstrom" />
     <link rel="shortcut icon" href="assets/favicon.ico">
 
-    <title>Big City House Wife</title>
+    <title>Big City House Wife : Memory Game</title>
 
     <!-- all source code by sakri.net , check it out on github : https://github.com/sakri/BigCityHouseWife -->
 
     <link rel="stylesheet" type="text/css" href="css/bigCityHouseWife.min.css">
 
 
-    <script type="text/javascript" src="js/TweetsManager.js" ></script>
-    <script type="text/javascript" src="js/BlogPostsManager.js" ></script>
     <script type="text/javascript" src="js/BCHWMathUtil.js" ></script>
     <script type="text/javascript" src="js/BCHWGeom.js" ></script>
     <script type="text/javascript" src="js/UnitAnimator.js" ></script>
     <script type="text/javascript" src="js/BCHWArrayUtil.js" ></script>
-    <script type="text/javascript" src="js/BCHWLayout.js" ></script>
+    <script type="text/javascript" src="js/BCHWImageStore.js" ></script>
     <script type="text/javascript" src="js/BCHWColor.js" ></script>
+    <script type="text/javascript" src="js/TransformRectangle.js" ></script>
+    <script type="text/javascript" src="js/games/MemoryGameCardFlip.js" ></script>
+    <script type="text/javascript" src="js/BCHWLayout.js" ></script>
     <script type="text/javascript" src="js/BCHWFont.js" ></script>
-    <script type="text/javascript" src="js/BCHWLogo.js" ></script>
-    <script type="text/javascript" src="js/BCHWCharacters.js" ></script>
-    <script type="text/javascript" src="js/BCHWSpeechBubble.js" ></script>
-    <script type="text/javascript" src="js/BCHWMain.js" ></script>
+    <script type="text/javascript" src="js/games/MemoryGameLogo.js" ></script>
 
-    <!--<script type="text/javascript" src="http://www.bigcityhousewife.net/js/bigCityHouseWife.js" ></script>-->
+    <script type="text/javascript" src="js/games/BCHWMemoryGame.js" ></script>
 
-
-     <!--<script type="text/javascript" src="js/BCHWTests.js" ></script>-->
+    <!--<script type="text/javascript" src="http://www.bigcityhousewife.net/js/BCHWMemoryGame.js" ></script>-->
 
     <script type="text/javascript">
 
@@ -50,32 +47,21 @@
             ga('send', 'pageview');
         }
 
-        function tweetLinkClickHandler(url){
+        function logGameEvent(action){
             if(location.hostname && location.hostname.toLowerCase().indexOf("bigcityhousewife")>-1){
-                ga("send", "event", "tweetClick", this.main.getCurrentTweeterName());
+                ga("send", "event", "memoryGame", action);
             }
-            window.open(url,'_blank')
         }
 
-        function blogPostClickHandler(url){
-            if(location.hostname && location.hostname.toLowerCase().indexOf("bigcityhousewife")>-1){
-                ga("send", "event", "blogPostClick", url);
-            }
-            window.open(url,'_blank')
-        }
 
         //MAIN APP
         var main;
 
         function init(){
             //console.log(JSON.parse ? "I can has json" :  "no Json");
-            main = new BCHWMain();
+            main = new BCHWMemoryGame();
             var canvasContainer = document.getElementById("homeCanvasContainer");
-            var speechBubbleContainer =  document.getElementById("speechBubbleContainer");
-            main.init(canvasContainer, speechBubbleContainer);
-            if(this["BCHWTests"]!=null){
-                runTests(true,false);
-            }
+            main.init(canvasContainer);
         }
 
         function resizeHandler(){
@@ -91,18 +77,12 @@
             }
         }, 10);
 
-        function speechBubbleContainerMouseOverHandler(){
-            main.speechBubbleContainerMouseOverHandler();
-        }
-
     </script>
 
 </head>
 <body onresize="resizeHandler()"  >
 
     <div id="homeCanvasContainer"></div>
-
-    <div id="speechBubbleContainer" onmouseover="speechBubbleContainerMouseOverHandler()" ></div>
 
     <!-- link to blog and social media -->
     <span id="BCHWLinks">

@@ -39,7 +39,68 @@
     BCHWGeom.randomizePoint = function(point,randomValue){
         return new BCHWGeom.Point(-randomValue+Math.random()*randomValue+point.x,-randomValue+Math.random()*randomValue+point.y);
     };
-    
+
+
+    //==================================================
+    //=====================::TRIANGLE::====================
+    //==================================================
+
+    BCHWGeom.Triangle = function (a,b,c){
+        this.a = a ? a : new BCHWGeom.Point(0,0);
+        this.b = b ? b : new BCHWGeom.Point(0,0);
+        this.c = c ? c : new BCHWGeom.Point(0,0);
+    };
+
+    BCHWGeom.Triangle.prototype.equals = function(triangle){
+        return this.a.equals(triangle.a) && this.b.equals(triangle.b) && this.c.equals(triangle.c);
+    };
+
+    BCHWGeom.Triangle.prototype.clone = function(){
+        return new BCHWGeom.Triangle(new BCHWGeom.Point(this.a.x,this.a.y),new BCHWGeom.Point(this.b.x,this.b.y),new BCHWGeom.Point(this.c.x,this.c.y));
+    };
+
+    BCHWGeom.Triangle.prototype.getSmallestX = function(){
+        return Math.min(this.a.x,this.b.x,this.c.x);
+    };
+    BCHWGeom.Triangle.prototype.getSmallestY = function(){
+        return Math.min(this.a.y,this.b.y,this.c.y);
+    };
+
+    BCHWGeom.Triangle.prototype.getBiggestX = function(){
+        return Math.max(this.a.x,this.b.x,this.c.x);
+    };
+    BCHWGeom.Triangle.prototype.getBiggestY = function(){
+        return Math.max(this.a.y,this.b.y,this.c.y);
+    };
+
+    BCHWGeom.Triangle.prototype.containsVertex = function(point){
+        //console.log("BCHWGeom.Triangle.containsVertex",this.toString(),point.toString());
+        return (this.a.x==point.x && this.a.y==point.y) || (this.b.x==point.x && this.b.y==point.y) || (this.c.x==point.x && this.c.y==point.y);
+    };
+
+    BCHWGeom.Triangle.prototype.toString = function(){
+        return "toString() Triangle{a:"+this.a+" , b:"+this.b+" , c:"+this.c+"}";
+    };
+
+    BCHWGeom.Triangle.prototype.containsVertex = function(point){
+        return (this.a.x==point.x && this.a.y==point.y) || (this.b.x==point.x && this.b.y==point.y) || (this.c.x==point.x && this.c.y==point.y);
+    };
+
+    BCHWGeom.Triangle.prototype.sharesEdge = function(triangle){
+        //console.log("BCHWGeom.Triangle.sharesEdge",this.toString(),triangle.toString());
+        var sharedPoints=0;
+        if(this.containsVertex(triangle.a)){
+            sharedPoints++;
+        }
+        if(this.containsVertex(triangle.b)){
+            sharedPoints++;
+        }
+        if(this.containsVertex(triangle.c)){
+            sharedPoints++;
+        }
+        //console.log("sharesEdge()",sharedPoints);
+        return sharedPoints==2;
+    };
     
 	//==================================================
 	//===================::RECTANGLE::==================
@@ -351,7 +412,40 @@
 		BCHWGeom.RectangleUtil.verticalAlignMiddle(staticRect,rectToScale);
 		BCHWGeom.RectangleUtil.horizontalAlignMiddle(staticRect,rectToScale);
 	};
-	
+
+
+    //==================================================
+    //=====================::TRANSFORM::===================
+    //==================================================
+
+    BCHWGeom.setIdentityMatrixToContext = function(context){
+        context.setTransform(1,0,0,1,0,0);
+    };
+
+    //(1,0,0,1,0,0);
+    BCHWGeom.Transform = function (scaleX, skewX, skewY, scaleY, tx, ty){
+        this.update(isNaN(scaleX) ? 1 : scaleX, isNaN(skewX) ? 0 : skewX, isNaN(skewY) ? 0 : skewY,
+            isNaN(scaleY) ? 1 : scaleY, isNaN( tx) ?  0 : tx, isNaN(ty) ? 0 : ty);
+    };
+
+    BCHWGeom.Transform.prototype.update = function (scaleX, skewX, skewY, scaleY, tx, ty){
+        this.scaleX = scaleX;
+        this.skewX = skewX;
+        this.skewY = skewY;
+        this.scaleY = scaleY;
+        this.tx = tx;
+        this.ty = ty;
+    };
+
+    BCHWGeom.Transform.prototype.toString = function() {
+        return "SimpleGeometry.Transform{scaleX:"+this.scaleX+" ,skewX:"+this.skewX+" ,skewY:"+this.skewY+" ,scaleY:"+this.scaleY+" ,tx:"+this.tx+" ,ty:"+this.ty+"}";
+    };
+
+
+
+
+
 	window.BCHWGeom = BCHWGeom;
+
 	
 }(window));
