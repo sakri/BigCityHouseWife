@@ -242,7 +242,21 @@
     //subclass extends superclass
     BCHWGeom.RoundedRectangle.prototype = Object.create(BCHWGeom.Rectangle.prototype);
     BCHWGeom.RoundedRectangle.prototype.constructor = BCHWGeom.Rectangle;
-		
+
+    BCHWGeom.RoundedRectangle.prototype.drawPathToContext = function(context){
+        context.beginPath();
+        context.moveTo(this.x, this.y+this.radius);
+        context.arc(this.x+this.radius, this.y+this.radius, this.radius, Math.PI,Math.PI+BCHWMathUtil.HALF_PI);
+        context.lineTo(this.getRight()-this.radius, this.y);
+        context.arc(this.getRight()-this.radius, this.y+this.radius, this.radius, Math.PI+BCHWMathUtil.HALF_PI, BCHWMathUtil.PI2 );
+        context.lineTo(this.getRight(), this.getBottom()-this.radius);
+        context.arc(this.getRight()-this.radius, this.getBottom()-this.radius, this.radius, 0, BCHWMathUtil.HALF_PI );
+        context.lineTo(this.x+this.radius, this.getBottom());
+        context.arc(this.x+this.radius, this.getBottom()-this.radius, this.radius, BCHWMathUtil.HALF_PI, Math.PI );
+        context.lineTo(this.x, this.y+this.radius);
+        context.closePath();
+    }
+
 	BCHWGeom.RoundedRectangle.prototype.toString = function(){
 		return "RoundedRectangle{x:"+this.x+" , y:"+this.y+" , width:"+this.width+" , height:"+this.height+" , radius:"+this.radius+"}";
 	};

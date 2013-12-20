@@ -40,6 +40,7 @@
 		};
 
 		var url = this.urls[this.currentLoadIndex];
+        console.log("BCHWImageStore.loadNextImage()", url );
 		image.onerror = function(){
 			alert("BCHWImageStore ERROR : "+url+" could not be loaded.");
 		};

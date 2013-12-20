@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="css/bigCityHouseWife.min.css">
 
 
-    <script type="text/javascript" src="js/BCHWMathUtil.js" ></script>
+    <!--<script type="text/javascript" src="js/BCHWMathUtil.js" ></script>
     <script type="text/javascript" src="js/BCHWGeom.js" ></script>
     <script type="text/javascript" src="js/UnitAnimator.js" ></script>
     <script type="text/javascript" src="js/BCHWArrayUtil.js" ></script>
@@ -25,13 +25,15 @@
     <script type="text/javascript" src="js/BCHWColor.js" ></script>
     <script type="text/javascript" src="js/TransformRectangle.js" ></script>
     <script type="text/javascript" src="js/games/MemoryGameCardFlip.js" ></script>
+    <script type="text/javascript" src="js/games/BCHWMemoryGameGridCell.js" ></script>
+    <script type="text/javascript" src="js/games/MemoryGameCardPrep.js" ></script>
     <script type="text/javascript" src="js/BCHWLayout.js" ></script>
     <script type="text/javascript" src="js/BCHWFont.js" ></script>
     <script type="text/javascript" src="js/games/MemoryGameLogo.js" ></script>
 
-    <script type="text/javascript" src="js/games/BCHWMemoryGame.js" ></script>
+    <script type="text/javascript" src="js/games/BCHWMemoryGame.js" ></script>-->
 
-    <!--<script type="text/javascript" src="http://www.bigcityhousewife.net/js/BCHWMemoryGame.js" ></script>-->
+    <script type="text/javascript" src="js/games/BCHWMemoryGame.min.js" ></script>
 
     <script type="text/javascript">
 
@@ -72,8 +74,8 @@
 
         var readyStateCheckInterval = setInterval( function() {
             if (document.readyState === "complete") {
-                init();
                 clearInterval(readyStateCheckInterval);
+                init();
             }
         }, 10);
 
