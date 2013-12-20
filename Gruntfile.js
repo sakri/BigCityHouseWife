@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                         "js/BCHWSpeechBubble.js",
                         "js/BCHWMain.js"],
 
-                    'js/games/bchwMemoryGame.js': ["js/BCHWMathUtil.js",
+                    'js/games/memoryGame.js': ["js/BCHWMathUtil.js",
                         "js/BCHWGeom.js",
                         "js/UnitAnimator.js",
                         "js/BCHWArrayUtil.js",
@@ -40,60 +40,17 @@ module.exports = function(grunt) {
                         "js/BCHWLayout.js",
                         "js/BCHWFont.js",
                         "js/games/MemoryGameLogo.js",
-                        "js/games/BCHWMemoryGame.js"]
+                        "js/games/MemoryGameMain.js"]
                 }
             }
         },
-        /*
-        concat: {
-
-            dist: {
-                src: [
-                    "js/TweetsManager.js",
-                    "js/BlogPostsManager.js",
-                    "js/BCHWMathUtil.js",
-                    "js/BCHWGeom.js",
-                    "js/UnitAnimator.js",
-                    "js/BCHWArrayUtil.js",
-                    "js/BCHWLayout.js",
-                    "js/BCHWColor.js",
-                    "js/BCHWFont.js",
-                    "js/BCHWLogo.js",
-                    "js/BCHWCharacters.js",
-                    "js/BCHWSpeechBubble.js",
-                    "js/BCHWMain.js"
-
-                ],
-                dest: 'js/bchw.js'
-            },
-            dist: {
-                src: [
-                    "js/BCHWMathUtil.js",
-                    "js/BCHWGeom.js",
-                    "js/UnitAnimator.js",
-                    "js/BCHWArrayUtil.js",
-                    "js/BCHWImageStore.js",
-                    "js/BCHWColor.js",
-                    "js/TransformRectangle.js",
-                    "js/games/MemoryGameCardFlip.js",
-                    "js/games/BCHWMemoryGameGridCell.js",
-                    "js/games/MemoryGameCardPrep.js",
-                    "js/BCHWLayout.js",
-                    "js/BCHWFont.js",
-                    "js/games/MemoryGameLogo.js",
-                    "js/games/BCHWMemoryGame.js"
-
-                ],
-                dest: 'js/games/bchwMemoryGame.js'
-            }
-        },*/
 
         uglify: {
 
             dist: {
                 files: {
                     'js/bchw.min.js':'js/bchw.js',
-                    'js/games/bchwMemoryGame.min.js': 'js/games/bchwMemoryGame.js'
+                    'js/games/memoryGame.min.js': 'js/games/memoryGame.js'
                 }
             }
         }
