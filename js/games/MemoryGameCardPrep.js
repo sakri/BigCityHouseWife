@@ -43,7 +43,7 @@
         this.preparationCanvas.height = size;
 
         //first resize image
-        console.log("prepareImage()", image.src);
+        //console.log("prepareImage()", image.src);
         //console.log(image.sourceImage.width, image.sourceImage.height, size, size);
         this.context.drawImage(image.sourceImage, 0, 0, image.sourceImage.width, image.sourceImage.height, 0, 0, size, size);
         image.preparedImage.src = this.preparationCanvas.toDataURL();
@@ -84,7 +84,7 @@
         this.sourceImage = image;
         this.src = image.src;
         this.preparedImage = document.createElement("img");
-        console.log("MemoryGameCardImage constructor : ", this.src);
+        //console.log("MemoryGameCardImage constructor : ", this.src);
     };
     window.MemoryGameCardImage = MemoryGameCardImage;
 

@@ -24,11 +24,6 @@
     BCHWMemoryGameGridCell.borderRect = new BCHWGeom.RoundedRectangle;
 
     BCHWMemoryGameGridCell.prototype.open = function(flipper){
-        if(this.image.src == this.bgImage.src){
-            console.log("BCHWMemoryGameGridCell.open() MUTHFAFUCKA WHAT?! this.image == this.bgImage");
-        }else{
-            console.log("BCHWMemoryGameGridCell.open() this.image != this.bgImage");
-        }
         if(flipper){
             flipper.flip(this, this.context, this.bgImage, this.image, undefined, undefined, true);
             this.isOpen = true;

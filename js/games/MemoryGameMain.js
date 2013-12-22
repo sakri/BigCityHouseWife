@@ -155,9 +155,9 @@
         this.canvasClickListener = function(event){scope.canvasClickHandlerHome(event)};
         this.canvas.addEventListener("click", this.canvasClickListener , false);
 
-        this.logoBounds = this.logo.getContentRect(this.renderRect);
-        this.logoBounds.y = this.renderRect.y;
-        this.logo.render(this.logoBounds, this.lineThickness);
+        this.logoBounds = new BCHWGeom.Rectangle();
+        this.logoBounds.updateToRect(this.renderRect);
+        this.logo.render(this.renderRect, this.lineThickness);
         //this.testFlip();
     };
 
@@ -195,6 +195,7 @@
 
 
     BCHWMemoryGame.prototype.enterGameScreen = function(grid){
+        this.logo.destroy();
         this.clearContext();
         this.selectedGrid = grid;
         this.imagesManager = new BCHWMemoryGameImagesManager();
